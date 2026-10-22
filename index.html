@@ -1,0 +1,1750 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f4f7f4">
+<meta name="description" content="Kiracı ve ev sahipleri için kira takibi, yenileme hesabı, ilan, belge ve görüşme randevusu.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Kira Defteri">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>html{padding-top:env(safe-area-inset-top,0px)}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>Kira Defteri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap">
+<style>
+/* Düzen: tek sütun, büyük dokunma alanları; yaşlı kullanıcılar için 18px taban yazı, en az 48px düğme */
+:root{
+  --bg:#f4f7f4;--kart:#fff;--yazi:#17241d;--yazi2:#2e3d35;--soluk:#4a5951;--cizgi:#d6e0d9;
+  --yesil:#2b7553;--yesilA:#e4f1e9;--yesilK:#1c4f38;
+  --kirmizi:#a8362a;--kirmiziA:#fbebe8;--sari:#7a5600;--sariA:#fff4d6;
+  --mavi:#2a5873;--maviA:#eaf2f7;--golge:rgba(20,40,30,.14);--r:16px;
+  --gutL:max(16px, env(safe-area-inset-left, 0px));--gutR:max(16px, env(safe-area-inset-right, 0px));
+  --yazitipi:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--yazi);font:18px/1.5 var(--yazitipi);font-variant-numeric:tabular-nums;padding-bottom:calc(84px + env(safe-area-inset-bottom,0px));-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:21;background:var(--bg)}
+a{color:var(--yesilK)}
+button,input,select,textarea{font-family:inherit}
+:focus-visible{outline:3px solid var(--yesil);outline-offset:2px}
+
+/* üst çubuk */
+.ust{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;display:flex;align-items:center;gap:8px;padding-block:8px;padding-left:var(--gutL);padding-right:var(--gutR);background:var(--bg);border-bottom:1px solid var(--cizgi)}
+.marka{flex:1;min-width:0;display:flex;align-items:center;gap:8px;font-weight:700;color:var(--yesilK);text-decoration:none;font-size:19px}
+.marka svg{flex:0 0 30px;width:30px;height:30px}
+.bildirimBtn{position:relative;display:flex;align-items:center;gap:6px;min-height:48px;padding:0 12px;border-radius:12px;border:1px solid var(--cizgi);background:var(--kart);color:var(--yazi);text-decoration:none;font-size:16px;font-weight:600}
+.bildirimBtn em{font-style:normal;min-width:24px;height:24px;padding:0 6px;border-radius:12px;background:var(--kirmizi);color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+main{max-width:640px;margin:0 auto;padding-block:8px 16px;padding-left:var(--gutL);padding-right:var(--gutR)}
+.baslik{font-size:26px;line-height:1.25;margin:16px 0 6px;text-wrap:balance}
+.baslikSatir{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.kart{display:block;background:var(--kart);border:1px solid var(--cizgi);border-radius:var(--r);padding:16px;margin:14px 0;color:inherit;text-decoration:none}
+.kartUst{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.kartBaslik{font-size:20px;line-height:1.3}
+.soluk{color:var(--soluk)}
+.kucukYazi{font-size:15px}
+.vurgu{color:var(--yesilK)}
+.geri{display:inline-flex;align-items:center;min-height:48px;margin-top:6px;padding:0 4px;text-decoration:none;font-weight:600;font-size:18px}
+.ipucu{display:flex;gap:10px;align-items:flex-start;background:var(--maviA);color:var(--mavi);border-radius:12px;padding:12px 14px;margin:10px 0 4px;font-size:16px;line-height:1.45}
+.ipucu svg{flex:0 0 22px;margin-top:1px}
+
+/* düğmeler */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 18px;border-radius:14px;border:2px solid var(--yesil);background:var(--yesil);color:#fff;font-size:17px;font-weight:600;text-decoration:none;cursor:pointer;text-align:center;line-height:1.2}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ikincil{background:var(--kart);color:var(--yesilK);border-color:var(--cizgi)}
+.btn.tehlike{background:var(--kart);color:var(--kirmizi);border-color:#e7bdb5}
+.btn.kucuk{min-height:48px;padding:0 14px;font-size:16px}
+.btn.tam{width:100%;margin-top:14px}
+.buyukBtn{min-height:58px;font-size:18px}
+.btnlar{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.btnlar .btn{flex:1 1 auto}
+.ikonBtn{display:flex;align-items:center;gap:6px;min-height:48px;padding:0 10px;border-radius:12px;color:var(--yesilK);font-size:16px;font-weight:600;text-decoration:none;border:1px solid var(--cizgi)}
+.tehlikeBolum{margin:28px 0 8px;padding:16px;border:2px dashed #e7bdb5;border-radius:var(--r);background:var(--kirmiziA)}
+.tehlikeBolum>b{display:block;color:var(--kirmizi);font-size:16px}
+.tehlikeBolum p{margin:4px 0 0;font-size:15px;color:var(--yazi2)}
+
+/* form */
+label.alan,div.alan{display:block;margin:14px 0;font-size:17px;font-weight:600;color:var(--yazi2)}
+.etiket{display:block}
+input,select,textarea{display:block;width:100%;margin-top:6px;font-size:18px;font-weight:400;color:var(--yazi);background:var(--kart);border:2px solid var(--cizgi);border-radius:12px;padding:12px 14px;min-height:54px}
+textarea{min-height:120px;resize:vertical;line-height:1.5}
+input:focus,select:focus,textarea:focus{outline:3px solid var(--yesilA);border-color:var(--yesil)}
+input[type=checkbox]{display:inline-block;flex:0 0 28px;width:28px;height:28px;min-height:0;margin:0;accent-color:var(--yesil)}
+.secenek{display:flex;align-items:center;gap:12px;min-height:52px;padding:6px 0;font-size:17px;font-weight:400;color:var(--yazi);cursor:pointer}
+.onayKutusu{display:flex;gap:14px;align-items:flex-start;padding:16px;border:2px solid var(--cizgi);border-radius:14px;background:var(--kart);font-size:17px;cursor:pointer}
+.onayKutusu input{margin-top:2px}
+.ikili{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:380px){.ikili.dar{grid-template-columns:1fr}}
+.combo{position:relative;margin-top:6px}
+.combo input{margin-top:0;padding-right:56px}
+.comboBtn{position:absolute;top:2px;right:2px;width:52px;height:50px;border:0;background:transparent;color:var(--yazi2);font-size:20px;cursor:pointer;border-radius:0 10px 10px 0}
+.comboListe{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:30;background:var(--kart);border:1px solid var(--cizgi);border-radius:12px;box-shadow:0 10px 28px var(--golge);max-height:280px;overflow:auto;padding:4px}
+.comboListe button{display:block;width:100%;text-align:left;border:0;background:transparent;min-height:50px;padding:0 14px;border-radius:10px;font-size:18px;color:var(--yazi);cursor:pointer}
+.comboListe button:hover,.comboListe button:focus-visible{background:var(--yesilA)}
+.secilenTarih{margin:6px 0 8px;font-weight:400;font-size:17px;color:var(--yazi)}
+
+/* sözleşme kartı */
+.rolSerit{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:12px;padding:10px 12px 10px 14px;border-radius:14px;background:var(--yesilA);color:var(--yesilK);font-size:16px}
+.rolSerit b{font-weight:700}
+.ozet{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+.ozet small,.yeniKira small{display:block;color:var(--soluk);font-size:15px}
+.ozet b,.yeniKira b{font-size:21px}
+.yeniKira{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;background:var(--yesilA);border-radius:12px;padding:12px 14px;margin-top:14px}
+.yeniKira p{grid-column:1/-1;margin:0}
+.yeniKira.tahmini{background:var(--sariA)}
+.tahminNot{grid-column:1/-1;margin:0;font-size:15px;line-height:1.45;color:var(--sari)}
+.geriSayim{display:flex;align-items:center;gap:12px;margin-top:14px;font-size:16px;color:var(--yazi2);white-space:nowrap}
+.ilerleme{flex:1;height:8px;background:var(--cizgi);border-radius:9px;overflow:hidden}
+.ilerleme>i{display:block;height:100%;background:var(--yesil);border-radius:9px}
+.uyari{background:var(--sariA);border-color:#ecd38c}
+.uyariUst{font-size:15px;font-weight:700;color:var(--sari);margin-bottom:4px}
+.bilgiNot{background:var(--maviA);border-color:#cfdfe9}
+.bilgiNot .uyariUst{color:var(--mavi)}
+.durum{margin:8px 0 0;padding:10px 12px;border-radius:12px;font-size:16px}
+.durum.kirmizi{background:var(--kirmiziA);color:var(--kirmizi)}
+.durum.yesil{background:var(--yesilA);color:var(--yesilK)}
+.durum.sari{background:var(--sariA);color:var(--sari)}
+.cip{display:inline-flex;align-items:center;padding:4px 12px;border-radius:999px;font-size:15px;font-weight:600;background:var(--yesilA);color:var(--yesilK);white-space:nowrap}
+.cip.kirmizi{background:var(--kirmiziA);color:var(--kirmizi)}
+.cip.sari{background:var(--sariA);color:var(--sari)}
+.cip.gri{background:#e9eeea;color:var(--yazi2)}
+.cipler{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.hizli{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.mini{margin:14px 0 0}
+.mini b{display:block;font-size:30px;color:var(--yesilK)}
+.mini span{font-size:16px;color:var(--yazi2)}
+.bos{text-align:center;color:var(--yazi2);padding:28px 16px}
+.yasal{font-size:15px;color:var(--soluk);text-align:center;margin:32px 0 8px}
+
+/* ödemeler */
+.yilSec{display:flex;gap:8px;overflow-x:auto;padding:6px 0}
+.yilSec button{flex:0 0 auto;border:2px solid var(--cizgi);background:var(--kart);border-radius:999px;padding:0 18px;font-size:17px;cursor:pointer;min-height:48px;color:var(--yazi)}
+.ay{background:var(--kart);border:2px solid var(--cizgi);border-radius:14px;padding:12px 14px;margin:10px 0}
+.ay.odendi{border-color:#a9d3bb}
+.ay.pasif{color:var(--soluk);font-size:16px;padding:10px 14px;border-width:1px}
+.ayUst{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ayUst b{font-size:19px}
+.ay details{margin-top:8px}
+.ay summary{min-height:44px;display:flex;align-items:center;cursor:pointer;color:var(--yesilK);font-size:16px;font-weight:600}
+.ay label.alan{margin:8px 0 0}
+.ozetTablo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;text-align:center}
+.ozetTablo b{display:block;font-size:20px}
+.ozetTablo small{color:var(--soluk);font-size:14px}
+
+/* ilan */
+.ilanKart{display:flex;gap:14px;padding:12px}
+.ilanKart img,.fotoYok{flex:0 0 112px;width:112px;height:112px;object-fit:cover;border-radius:12px;background:var(--cizgi)}
+.fotoYok{display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--soluk);text-align:center}
+.ilanBilgi{min-width:0}
+.ilanBilgi b{display:block;font-size:19px;line-height:1.3}
+.fiyat{font-weight:700;color:var(--yesilK);margin-top:4px;font-size:20px}
+.fiyat small{font-weight:400;color:var(--soluk);font-size:16px}
+.fiyat.buyuk{font-size:26px}
+.galeri{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;margin-top:12px;padding-bottom:6px}
+.galeri img{flex:0 0 88%;height:240px;object-fit:cover;border-radius:14px;scroll-snap-align:start;background:var(--cizgi);cursor:zoom-in;max-width:100%}
+.ozellik{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ozellik small{display:block;color:var(--soluk);font-size:15px}
+.aciklama{white-space:pre-wrap;margin:14px 0 0}
+.liste{margin:8px 0 0;padding-left:22px}
+.liste li{margin:4px 0}
+.kucukler{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.kucukler div{position:relative}
+.kucukler img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;display:block;background:var(--cizgi);max-width:100%}
+.kucukler button{position:absolute;top:6px;right:6px;min-height:36px;padding:0 10px;border-radius:18px;border:0;background:rgba(15,25,20,.75);color:#fff;font-size:14px;font-weight:600;cursor:pointer}
+
+/* takvim */
+.takvim{border:2px solid var(--cizgi);border-radius:16px;padding:10px;background:var(--kart)}
+.yilSatir{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--cizgi);font-size:17px}
+.yilSatir button{min-height:44px;padding:0 12px;border:1px solid var(--cizgi);background:var(--kart);border-radius:12px;font-size:16px;cursor:pointer;color:var(--yazi)}
+.takvimUst{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.takvimUst b{font-size:20px}
+.takvimUst button{width:52px;height:52px;border:1px solid var(--cizgi);background:var(--kart);border-radius:14px;font-size:26px;line-height:1;cursor:pointer;color:var(--yazi)}
+.takvimUst button:disabled,.yilSatir button:disabled{opacity:.3;cursor:default}
+.takvimIzgara{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;text-align:center}
+.takvimIzgara .hg{font-size:14px;color:var(--soluk);padding:4px 0;font-weight:600}
+.tg{position:relative;min-height:48px;border:2px solid transparent;background:var(--kart);border-radius:12px;font-size:19px;font-weight:600;color:var(--yazi);cursor:pointer;padding:0}
+.tg:disabled{color:#b3bdb7;font-weight:400;cursor:default}
+.tg.bugun{border-color:var(--yesil)}
+.tg.isaret::after{content:"";position:absolute;bottom:4px;left:50%;width:7px;height:7px;margin-left:-3.5px;border-radius:4px;background:var(--yesil)}
+.tg.secili.isaret::after{background:#fff}
+.secili{background:var(--yesil)!important;border-color:var(--yesil)!important;color:#fff!important}
+.adim{display:flex;align-items:center;gap:12px;margin:24px 0 10px;font-size:19px}
+.adim>b,.adimMetin{flex:1;min-width:0}
+.adimMetin small{display:block;font-size:15px;font-weight:400;color:var(--soluk)}
+.adimNo{flex:0 0 34px;height:34px;border-radius:17px;background:var(--yesil);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:17px}
+.hizliSec{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.hizliSec .btn{flex-direction:column;gap:0;padding:6px 4px;min-height:62px;font-size:16px}
+.hizliSec small{font-weight:400;font-size:13px;color:var(--soluk)}
+.hizliSec .btn.secili small{color:#fff}
+.ozetGun{margin-top:12px;padding-top:12px;border-top:1px solid rgba(28,79,56,.18)}
+.ozetGunUst{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.cikarBtn{min-height:44px;padding:0 12px;border:1px solid #e7bdb5;background:var(--kart);color:var(--kirmizi);border-radius:12px;font-size:15px;font-weight:600;cursor:pointer}
+.secimCipler{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.secimCip{display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:0 12px 0 14px;border:2px solid var(--yesil);background:var(--kart);color:var(--yesilK);border-radius:23px;font-size:17px;font-weight:600;cursor:pointer}
+.secimCip span{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:12px;background:var(--yesilA);font-size:13px}
+.saatIzgara,.segment{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.saatBuyuk,.segment button{min-height:56px;border:2px solid var(--cizgi);background:var(--kart);border-radius:14px;font-size:19px;font-weight:600;color:var(--yazi);cursor:pointer}
+.saatBuyuk:disabled{opacity:.35;cursor:default}
+.ozetKutu{margin-top:16px;padding:14px;border-radius:14px;background:var(--yesilA);color:var(--yesilK);font-size:17px;line-height:1.5}
+.ozetKutu p{margin:4px 0 0}
+.gunGrup{margin-top:14px}
+.gunBaslik{font-size:16px;font-weight:700;color:var(--yazi2);margin-bottom:8px}
+.saatler{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.saat{border:2px solid var(--cizgi);background:var(--kart);border-radius:12px;min-height:50px;font-size:17px;cursor:pointer;color:var(--yazi);display:flex;align-items:center;justify-content:center;text-decoration:none}
+.saat.dolu{background:var(--yesilA);border-color:#a9d3bb;color:var(--yesilK);font-weight:700}
+.randevu{display:flex;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--cizgi)}
+.randevu:first-of-type{border-top:0}
+.randevu .saatKutu{flex:0 0 64px;text-align:center;font-weight:700;font-size:20px;color:var(--yesilK)}
+
+/* başvuru adımları */
+.adimBar{margin-top:8px}
+.adimBilgi{font-size:16px;font-weight:700;color:var(--yesilK)}
+.adimNokta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:8px 0}
+.adimNokta i{height:8px;border-radius:4px;background:var(--cizgi)}
+.adimNokta i.tamam{background:var(--yesil)}
+.adimNav{position:sticky;bottom:calc(76px + env(safe-area-inset-bottom,0px));display:flex;gap:10px;margin-top:20px;padding:10px 0;background:var(--bg)}
+.adimNav .btn{flex:1}
+.belgeKutu{border:2px solid var(--cizgi);border-radius:16px;padding:16px;margin:14px 0;background:var(--kart)}
+.belgeKutu.tamam{border-color:#a9d3bb}
+.belgeKutuUst{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.belgeKutuUst b{font-size:19px;line-height:1.3}
+.belgeOnizleme{display:flex;gap:12px;align-items:center;margin-top:12px}
+.belgeOnizleme img,.belgeOnizleme .pdf{flex:0 0 72px;width:72px;height:72px;border-radius:10px;object-fit:cover;background:var(--kirmiziA);color:var(--kirmizi);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+.belgeOnizleme span{min-width:0;overflow-wrap:anywhere;font-size:15px;color:var(--yazi2)}
+.dosyaBtn{position:relative;overflow:hidden}
+.ozetSatir{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:12px 0;border-top:1px solid var(--cizgi)}
+.ozetSatir:first-child{border-top:0;padding-top:0}
+.ozetSatir div{min-width:0}
+.ozetSatir small{display:block;color:var(--soluk);font-size:15px}
+.basari{text-align:center;padding:12px 0 4px}
+.basari .tik{width:96px;height:96px;margin:8px auto 4px;border-radius:48px;background:var(--yesil);color:#fff;display:flex;align-items:center;justify-content:center}
+.siradaki{margin:8px 0 0;padding-left:24px}
+.siradaki li{margin:8px 0}
+
+/* belgeler (görüntüleme) */
+.belgeler{display:grid;gap:10px;margin-top:10px}
+.belge{display:flex;gap:12px;align-items:center;text-align:left;width:100%;border:2px solid var(--cizgi);background:var(--kart);border-radius:14px;padding:10px;cursor:pointer;color:var(--yazi);font-size:17px}
+.belge img,.belge .pdf{flex:0 0 56px;width:56px;height:56px;border-radius:10px;object-fit:cover;background:var(--kirmiziA);color:var(--kirmizi);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.belge span{min-width:0}
+.belge small{display:block;color:var(--soluk);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.bildirim{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:var(--kart);border:2px solid var(--cizgi);border-radius:14px;padding:14px;margin:10px 0;cursor:pointer;color:var(--yazi);font-size:17px}
+.bildirim.yeni{border-color:#a9d3bb;background:#f6fbf8}
+.bildirim i{flex:0 0 10px;height:10px;border-radius:5px;margin-top:8px;background:transparent}
+.bildirim.yeni i{background:var(--yesil)}
+.bildirim small{display:block;color:var(--soluk);font-size:15px;margin-top:2px}
+.tablo{width:100%;border-collapse:collapse;margin-top:8px;font-size:17px}
+.tablo td{padding:8px 0;border-top:1px solid var(--cizgi)}
+.tablo td:last-child{text-align:right;font-weight:600}
+
+/* giriş ve tanıtım */
+.giris{text-align:center;padding:28px 0 8px}
+.giris .logo svg{width:80px;height:80px}
+.giris h1{margin:12px 0 6px;color:var(--yesilK);font-size:30px;text-wrap:balance}
+.giris p{margin:0 auto;max-width:30em}
+.tanitimIkon{width:120px;height:120px;margin:24px auto 8px;border-radius:60px;background:var(--yesilA);color:var(--yesilK);display:flex;align-items:center;justify-content:center}
+.noktalar{display:flex;justify-content:center;gap:8px;margin:20px 0}
+.noktalar i{width:12px;height:12px;border-radius:6px;background:var(--cizgi)}
+.noktalar i.aktif{background:var(--yesil);width:28px}
+.rolBtn{display:block;width:100%;text-align:left;background:var(--kart);border:2px solid var(--cizgi);border-radius:var(--r);padding:20px;margin:14px 0;cursor:pointer;color:var(--yazi);font-size:16px}
+.rolBtn b{display:block;font-size:22px;color:var(--yesilK);margin-bottom:4px}
+.rolBtn span{color:var(--yazi2);font-size:16px}
+.rolBtn.secili b,.rolBtn.secili span{color:#fff}
+
+/* alt menü */
+.alt{position:fixed;bottom:0;left:0;right:0;z-index:20;display:flex;background:var(--kart);border-top:1px solid var(--cizgi);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);box-shadow:0 -4px 16px rgba(20,40,30,.05)}
+.alt[hidden]{display:none}
+.alt a{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 2px 8px;font-size:13px;color:var(--yazi2);text-decoration:none;text-align:center}
+.alt a.aktif{color:var(--yesil);font-weight:700}
+.alt a.aktif::before{content:"";position:absolute;top:0;left:22%;right:22%;height:3px;border-radius:0 0 3px 3px;background:var(--yesil)}
+.alt .rozet{position:absolute;top:4px;left:calc(50% + 6px);min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--kirmizi);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+#toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--yazi);color:#fff;padding:14px 18px;border-radius:14px;font-size:17px;opacity:0;pointer-events:none;transition:.2s;z-index:50;max-width:90vw;text-align:center}
+#toast.acik{opacity:1;transform:translate(-50%,0)}
+#modal{position:fixed;inset:0;z-index:60;background:rgba(15,25,20,.55);display:flex;align-items:flex-end;justify-content:center;padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+[hidden],#modal[hidden]{display:none!important}
+.modalKutu{background:var(--kart);color:var(--yazi);border-radius:18px;padding:18px;width:100%;max-width:520px;max-height:85vh;overflow:auto;font-size:18px}
+.modalKutu p{margin:0 0 4px}
+.modalKutu img{display:block;width:100%;border-radius:12px;background:var(--cizgi)}
+.modalKutu iframe{width:100%;height:65vh;border:1px solid var(--cizgi);border-radius:12px;background:#fff}
+@media (min-width:600px){#modal{align-items:center}.galeri img{flex-basis:70%}}
+@media (prefers-reduced-motion:reduce){#toast{transition:none}.isikla{animation:none!important}}
+.baslaBurada{border-radius:20px;outline:3px solid #dcaa2e;outline-offset:3px;background:var(--sariA);padding:8px}
+.baslaEtiket{font-weight:700;color:var(--sari);padding:2px 6px 8px;font-size:18px}
+.beklemede,.beklemedeGrup .btn{opacity:.5;border-style:dashed!important}
+@keyframes isik{0%,100%{box-shadow:0 0 0 0 rgba(220,170,46,0)}50%{box-shadow:0 0 0 12px rgba(220,170,46,.6)}}
+.isikla{animation:isik .7s ease-in-out 3}
+.tarifAdimlar{display:grid;gap:12px;margin-top:12px}
+.tarifAdim{background:var(--kart);border:1px solid #cfdfe9;border-radius:14px;overflow:hidden}
+.tarifFoto{display:block;width:100%;padding:0;border:0;background:var(--cizgi);cursor:zoom-in}
+.tarifFoto img{display:block;width:100%;max-width:100%;aspect-ratio:4/3;object-fit:cover}
+.tarifMetin{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;color:var(--yazi)}
+.tarifMetin p{margin:3px 0 0}
+.tarifDuzen{border:2px solid var(--cizgi);border-radius:14px;padding:12px;margin-top:12px;background:var(--kart)}
+.tarifDuzenUst{display:flex;gap:10px;align-items:center}
+.tarifDuzenUst img{flex:0 0 84px;width:84px;height:84px;object-fit:cover;border-radius:10px;background:var(--cizgi)}
+.tarifDugmeler{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+.tarifDugmeler button{min-width:48px;min-height:48px;border:1px solid var(--cizgi);background:var(--kart);border-radius:12px;font-size:18px;font-weight:600;cursor:pointer;color:var(--yazi)}
+.tarifDugmeler button:disabled{opacity:.3}
+.tarifDugmeler .kirmiziYazi{color:var(--kirmizi);font-size:15px;padding:0 10px}
+</style>
+</head>
+<body>
+
+<header class="ust" id="ust"></header>
+<main id="app"></main>
+<nav class="alt" id="altNav" hidden></nav>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="modal" hidden><div class="modalKutu" role="dialog" aria-modal="true" id="modalIcerik"></div></div>
+
+<script>
+'use strict';
+/* =========================================================
+   KİRA DEFTERİ
+   - Ana veri: localStorage["kiraDefteri.v1"]  (tek JSON nesnesi: S)
+   - Dosyalar (fotoğraf, belge): IndexedDB "kiraDefteriDosya"
+   - Oranlar: oranlar.json (yoksa aşağıdaki gömülü değerler)
+   ========================================================= */
+
+/* Claude içinde mi (artifact), yoksa kendi sitesinde mi (GitHub Pages) çalışıyor? */
+const CLAUDE_ICINDE = !!(window.claude && window.claude.use);
+const IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const YUKLU = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+const ORANLAR_VARSAYILAN = { "2026-10": 31.49, "2026-09": 31.79 };
+const DEPO_ANAHTARI = 'kiraDefteri.v1';
+const AYLAR = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+
+const BELGE_TURLERI = {
+  kimlik: 'Kimlik (ön ve arka)',
+  findeks: 'Findeks risk raporu',
+  adli: 'Adli sicil kaydı',
+  gelir: 'Gelir belgesi / maaş bordrosu',
+  ikametgah: 'Yerleşim yeri (ikametgâh) belgesi',
+  kefil: 'Kefil bilgileri',
+  ogrenci: 'Öğrenci belgesi'
+};
+const BELGE_IPUCU = {
+  kimlik: 'Kimliğinin ön ve arka yüzü. İkisi tek fotoğrafta yan yana olabilir.',
+  findeks: 'findeks.com sitesinden veya bankanın uygulamasından PDF olarak alınır.',
+  adli: "e-Devlet'te \"Adli Sicil Kaydı Sorgulama\" ile barkodlu PDF olarak alınır.",
+  gelir: 'Son aya ait maaş bordrosu veya gelir belgesi.',
+  ikametgah: "e-Devlet'te \"Yerleşim Yeri ve Diğer Adres Belgesi Sorgulama\" ile alınır.",
+  kefil: 'Kefilin adı, telefonu ve kimlik bilgisi; fotoğraf ya da PDF.',
+  ogrenci: "e-Devlet'ten veya okulundan alınan öğrenci belgesi."
+};
+const ANAHTAR = {
+  kapida: 'Ev sahibi kapıda karşılayacak',
+  kapici: 'Kapıcıdan / komşudan alınacak',
+  kutu: 'Anahtar kutusu (şifreli)',
+  yonetim: 'Site yönetiminden alınacak',
+  emlak: 'Emlak ofisinden alınacak',
+  diger: 'Diğer'
+};
+const DURUMLAR = {
+  beklemede: ['Bekliyor', 'sari'],
+  inceleniyor: ['İnceleniyor', 'sari'],
+  onaylandi: ['Onaylandı', ''],
+  reddedildi: ['Reddedildi', 'kirmizi'],
+  geriCekildi: ['Geri çekildi', 'gri']
+};
+const ODA_SECENEKLERI = ['Stüdyo (1+0)', '1+1', '2+1', '2+2', '3+1', '3+2', '4+1', '4+2', '5+1', '5+2', '6+1', 'Dubleks', 'Tripleks'];
+
+/* ---------- Durum (state) ---------- */
+function bosDurum() {
+  return {
+    surum: 1,
+    rol: null,                 // 'kiraci' | 'evsahibi'
+    tanitim: false,            // ilk açılış tanıtımı görüldü mü
+    profil: { ad: '', telefon: '' },
+    oranlar: {},               // "YYYY-MM": yüzde
+    sozlesmeler: [],           // {id, rol, ad, baslangic, kira, karsiTaraf, telefon, istenenKira, uyari30, olusturma}
+    odemeler: {},              // { [sozlesmeId]: { "YYYY-MM": {durum, tarih, tutar, not} } }
+    ilanlar: [],               // {id, baslik, adres, kira, depozito, oda, m2, kat, aciklama, fotolar[], belgeler[], anahtar{yontem,aciklama}, durum, olusturma}
+    slotlar: [],               // {id, ilanId, bas:"YYYY-MM-DDTHH:MM", sure, durum:'bos'|'dolu', basvuruId, hat24}
+    basvurular: [],            // {id, ilanId, ad, telefon, mesaj, belgeler{tur:{id,ad,tur,boyut}}, slotId, durum, evSahibiNotu, olusturma}
+    bildirimler: []            // {id, rol, metin, link, tarih, okundu}
+  };
+}
+function yukle() {
+  try {
+    const v = JSON.parse(localStorage.getItem(DEPO_ANAHTARI));
+    if (v && typeof v === 'object') return Object.assign(bosDurum(), v);
+  } catch (e) {}
+  return bosDurum();
+}
+let S = yukle();
+function kaydet() {
+  try { localStorage.setItem(DEPO_ANAHTARI, JSON.stringify(S)); }
+  catch (e) { toast('Kaydedilemedi: cihaz depolaması dolu olabilir.'); }
+}
+
+/* ---------- Dosya deposu (IndexedDB) ---------- */
+const DB = {
+  db: null,
+  async ac() {
+    if (this.db) return this.db;
+    this.db = await new Promise((ok, no) => {
+      const r = indexedDB.open('kiraDefteriDosya', 1);
+      r.onupgradeneeded = () => r.result.createObjectStore('dosyalar', { keyPath: 'id' });
+      r.onsuccess = () => ok(r.result);
+      r.onerror = () => no(r.error);
+    });
+    return this.db;
+  },
+  async islem(mod, fn) {
+    const db = await this.ac();
+    return new Promise((ok, no) => {
+      const t = db.transaction('dosyalar', mod);
+      const istek = fn(t.objectStore('dosyalar'));
+      t.oncomplete = () => ok(istek ? istek.result : undefined);
+      t.onerror = () => no(t.error);
+      t.onabort = () => no(t.error);
+    });
+  },
+  koy(k) { return this.islem('readwrite', s => s.put(k)); },
+  al(id) { return this.islem('readonly', s => s.get(id)); },
+  sil(id) { return this.islem('readwrite', s => s.delete(id)); },
+  hepsi() { return this.islem('readonly', s => s.getAll()); }
+};
+const URLLER = {};
+async function dosyaUrl(id) {
+  if (URLLER[id]) return URLLER[id];
+  const k = await DB.al(id).catch(() => null);
+  if (!k) return null;
+  return (URLLER[id] = URL.createObjectURL(k.blob));
+}
+async function resimKucult(file, max, kalite) {
+  try {
+    const bmp = await createImageBitmap(file);
+    const o = Math.min(1, max / Math.max(bmp.width, bmp.height));
+    const c = document.createElement('canvas');
+    c.width = Math.round(bmp.width * o); c.height = Math.round(bmp.height * o);
+    c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+    const b = await new Promise(r => c.toBlob(r, 'image/jpeg', kalite));
+    return b && b.size < file.size ? b : file;
+  } catch (e) { return file; }
+}
+async function dosyaKaydet(file, maxPx) {
+  let blob = file;
+  if (file.type.startsWith('image/')) blob = await resimKucult(file, maxPx || 2000, 0.85);
+  if (blob.size > 8 * 1024 * 1024) throw new Error(`"${file.name}" çok büyük. En fazla 8 MB olabilir.`);
+  const k = { id: uid(), ad: file.name, tur: blob.type || file.type, boyut: blob.size, blob, olusturma: new Date().toISOString() };
+  await DB.koy(k);
+  return { id: k.id, ad: k.ad, tur: k.tur, boyut: k.boyut };
+}
+async function dosyaSil(id) { try { await DB.sil(id); } catch (e) {} if (URLLER[id]) { URL.revokeObjectURL(URLLER[id]); delete URLLER[id]; } }
+function dosyalariBagla(kok) {
+  (kok || document).querySelectorAll('img[data-dosya]').forEach(async img => {
+    const u = await dosyaUrl(img.dataset.dosya);
+    if (u) img.src = u;
+  });
+}
+async function belgeAc(id, indirAdi) {
+  const k = await DB.al(id).catch(() => null);
+  const u = await dosyaUrl(id);
+  if (!k || !u) return toast('Dosya bulunamadı.');
+  const resim = (k.tur || '').startsWith('image/');
+  $('#modalIcerik').innerHTML = `<div class="kartUst" style="margin-bottom:12px"><b style="min-width:0;overflow-wrap:anywhere">${esc(indirAdi || k.ad)}</b><button class="btn kucuk ikincil" onclick="modalKapat()">Kapat</button></div>`
+    + (resim ? `<img src="${u}" alt="${esc(k.ad)}">` : `<iframe src="${u}" title="${esc(k.ad)}"></iframe><p class="soluk kucukYazi" style="margin-top:8px">PDF burada görünmüyorsa cihazın PDF önizlemesini desteklemiyor olabilir.</p>`)
+    + (indirAdi ? `<button class="btn tam" onclick="tekBelgeIndir('${id}','${esc(indirAdi).replace(/'/g, '&#39;')}')">${ik(IK.indir, 22)}Bu belgeyi indir / paylaş</button>` : '');
+  $('#modal').hidden = false;
+}
+
+/* ---------- İndirme / paylaşma (downloads yeteneği) ---------- */
+const UZANTI = { 'image/jpeg': 'jpg', 'image/jpg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif', 'application/pdf': 'pdf' };
+const dosyaAdi = t => String(t).replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 120);
+async function kaydetPaylas(filename, data) {
+  if (!CLAUDE_ICINDE) return paylasimPenceresi(filename, data instanceof Blob ? data : new Blob([data]));
+  let dl = null;
+  try { dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null; } catch (e) {}
+  if (!dl) { toast('Bu görünümde dosya kaydedilemiyor. Sayfayı Claude uygulamasında aç.'); return false; }
+  try { await dl.save({ filename, data }); toast('Dosya hazır'); return true; }
+  catch (e) {
+    const k = e && e.code;
+    toast(k === 'declined' ? 'Kaydetme iptal edildi.' : k === 'rate_limited' ? 'Biraz bekleyip yeniden dene.' : k === 'too_large' ? 'Dosya çok büyük.' : 'Dosya kaydedilemedi.');
+    return false;
+  }
+}
+/* Kendi sitesinde: dosya hazır olunca paylaşım penceresi (dokunuşla açıldığı için telefon izin verir) */
+const trAscii = t => String(t).replace(/[çÇğĞıİöÖşŞüÜ]/g, c => ({ ç: 'c', Ç: 'C', ğ: 'g', Ğ: 'G', ı: 'i', İ: 'I', ö: 'o', Ö: 'O', ş: 's', Ş: 'S', ü: 'u', Ü: 'U' }[c]));
+function paylasimPenceresi(ad, blob) {
+  ad = trAscii(ad);
+  const tur = blob.type || (ad.endsWith('.pdf') ? 'application/pdf' : 'image/jpeg');
+  const dosya = new File([blob], ad, { type: tur });
+  const paylasilir = !!(navigator.canShare && navigator.canShare({ files: [dosya] }));
+  $('#modalIcerik').innerHTML = `<div style="text-align:center"><div class="tik" style="width:64px;height:64px;margin:4px auto 8px;border-radius:32px;background:var(--yesil);color:#fff;display:flex;align-items:center;justify-content:center">${ik(IK.tik, 36)}</div>
+    <b style="font-size:20px">Dosya hazır</b><p class="soluk" style="margin:4px 0 0;overflow-wrap:anywhere">${esc(ad)} · ${boyutYaz(blob.size)}</p></div>
+    ${paylasilir ? `<button class="btn tam buyukBtn" id="pPaylas">${ik(IK.paylas, 22)}Paylaş: WhatsApp, Mail, Yazdır…</button>` : ''}
+    <button class="btn ${paylasilir ? 'ikincil' : ''} tam" id="pIndir">${ik(IK.indir, 22)}Telefona indir</button>
+    <button class="btn ikincil tam" onclick="modalKapat()">Kapat</button>
+    ${paylasilir ? '<p class="soluk kucukYazi" style="margin-top:10px">Yazdırmak için paylaş menüsünde "Yazdır"ı seç.</p>' : ''}`;
+  $('#modal').hidden = false;
+  if (paylasilir) $('#pPaylas').onclick = async () => {
+    try { await navigator.share({ files: [dosya], title: ad }); modalKapat(); }
+    catch (e) { if (!e || e.name !== 'AbortError') toast('Paylaşım açılamadı; "Telefona indir"i dene.'); }
+  };
+  $('#pIndir').onclick = () => {
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = ad;
+    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+    toast('İndiriliyor'); modalKapat();
+  };
+  return true;
+}
+async function tekBelgeIndir(id, ad) {
+  const k = await DB.al(id).catch(() => null);
+  if (!k) return toast('Dosya bulunamadı.');
+  let blob = k.blob, uz = UZANTI[k.tur];
+  if (!uz && (k.tur || '').startsWith('image/')) {   // ör. HEIC: JPEG'e çevir
+    try { const bmp = await createImageBitmap(k.blob); const c = document.createElement('canvas'); c.width = bmp.width; c.height = bmp.height; c.getContext('2d').drawImage(bmp, 0, 0); blob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.9)); uz = 'jpg'; } catch (e) {}
+  }
+  if (!uz) return toast('Bu dosya biçimi indirilemiyor.');
+  kaydetPaylas(`${dosyaAdi(ad)}.${uz}`, blob);
+}
+let PDFLIB_SOZ = null;
+function pdfLibYukle() {
+  if (window.PDFLib) return Promise.resolve(window.PDFLib);
+  const kaynaklar = ['https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js'];
+  const dene = n => new Promise((ok, no) => {
+    const sc = document.createElement('script'); sc.src = kaynaklar[n];
+    sc.onload = () => (window.PDFLib ? ok(window.PDFLib) : no());
+    sc.onerror = () => { sc.remove(); n + 1 < kaynaklar.length ? dene(n + 1).then(ok, no) : no(); };
+    document.head.appendChild(sc);
+  });
+  return (PDFLIB_SOZ = PDFLIB_SOZ || dene(0).catch(() => { PDFLIB_SOZ = null; throw new Error('PDF aracı yüklenemedi. İnternet bağlantını kontrol edip yeniden dene.'); }));
+}
+const SAYFA = [1240, 1754];  // A4, 150 dpi
+function sayfaTuvali() { const c = document.createElement('canvas'); c.width = SAYFA[0]; c.height = SAYFA[1]; const x = c.getContext('2d'); x.fillStyle = '#ffffff'; x.fillRect(0, 0, c.width, c.height); x.textBaseline = 'top'; return [c, x]; }
+function satirlar(x, metin, X, Y, en, yuk) {
+  const kelimeler = String(metin).split(/\s+/); let satir = '';
+  for (const k of kelimeler) {
+    const dene = satir ? satir + ' ' + k : k;
+    if (x.measureText(dene).width > en && satir) { x.fillText(satir, X, Y); Y += yuk; satir = k; } else satir = dene;
+  }
+  if (satir) { x.fillText(satir, X, Y); Y += yuk; }
+  return Y;
+}
+const yaziTipi = (k, kalin) => `${kalin ? 700 : 400} ${k}px ${getComputedStyle(document.body).fontFamily}`;
+async function tuvalJpg(c) { const b = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.88)); return new Uint8Array(await b.arrayBuffer()); }
+async function tuvaliSayfaYap(doc, c) { const im = await doc.embedJpg(await tuvalJpg(c)); const pg = doc.addPage([595.28, 841.89]); pg.drawImage(im, { x: 0, y: 0, width: 595.28, height: 841.89 }); }
+async function belgelerPdf(bid) {
+  const b = S.basvurular.find(x => x.id === bid); if (!b) return;
+  const i = S.ilanlar.find(x => x.id === b.ilanId), slot = b.slotId && S.slotlar.find(x => x.id === b.slotId);
+  const btn = $('#pdfBtn'), eski = btn ? btn.innerHTML : '';
+  if (btn) { btn.disabled = true; btn.textContent = 'PDF hazırlanıyor…'; }
+  try {
+    const { PDFDocument } = await pdfLibYukle();
+    const doc = await PDFDocument.create();
+    doc.setTitle(`${b.ad} - başvuru belgeleri`); doc.setCreator('Kira Defteri');
+    const liste = Object.entries(b.belgeler || {});
+    // Kapak sayfası
+    let [c, x] = sayfaTuvali(); const M = 110, EN = SAYFA[0] - 2 * M; let y = 120;
+    x.fillStyle = '#2b7553'; x.fillRect(0, 0, SAYFA[0], 24);
+    x.fillStyle = '#1c4f38'; x.font = yaziTipi(58, true); y = satirlar(x, 'Kiracı başvuru belgeleri', M, y, EN, 72) + 30;
+    x.fillStyle = '#17241d';
+    const bilgi = [['Başvuran', b.ad], ['Telefon', b.telefon || '—'], ['İlan', i ? i.baslik : '—'], ['Adres', i ? i.adres : '—'], ['Başvuru tarihi', tarihYaz(b.olusturma)], ['Görüşme', slot ? tarihSaat(slot.bas) : 'Saat seçilmedi'], ['Durum', (DURUMLAR[b.durum] || [b.durum])[0]]];
+    for (const [a, v] of bilgi) { x.font = yaziTipi(28, false); x.fillStyle = '#4a5951'; x.fillText(a, M, y); x.font = yaziTipi(34, true); x.fillStyle = '#17241d'; y = satirlar(x, v, M + 300, y - 3, EN - 300, 44) + 16; }
+    if (b.mesaj) { x.font = yaziTipi(28, false); x.fillStyle = '#4a5951'; x.fillText('Not', M, y); x.font = yaziTipi(30, false); x.fillStyle = '#17241d'; y = satirlar(x, '“' + b.mesaj + '”', M + 300, y - 2, EN - 300, 42) + 16; }
+    y += 30; x.fillStyle = '#d6e0d9'; x.fillRect(M, y, EN, 3); y += 40;
+    x.fillStyle = '#1c4f38'; x.font = yaziTipi(36, true); x.fillText('Bu dosyadaki belgeler', M, y); y += 64;
+    x.font = yaziTipi(32, false); x.fillStyle = '#17241d';
+    liste.forEach(([k, d], n) => { y = satirlar(x, `${n + 1}. ${BELGE_TURLERI[k] || k}`, M, y, EN, 48); });
+    if (!liste.length) y = satirlar(x, 'Belge yok.', M, y, EN, 48);
+    x.font = yaziTipi(24, false); x.fillStyle = '#4a5951';
+    satirlar(x, `Kira Defteri ile ${tarihYaz(new Date())} tarihinde hazırlandı. Bu dosya kişisel veri içerir; yalnızca kiralama değerlendirmesi için paylaşın.`, M, SAYFA[1] - 170, EN, 36);
+    await tuvaliSayfaYap(doc, c);
+    // Belgeler
+    for (const [n, [k, d]] of liste.entries()) {
+      const kayit = await DB.al(d.id).catch(() => null);
+      const baslik = `${n + 1}. ${BELGE_TURLERI[k] || k} · ${b.ad}`;
+      const ustBant = (x) => { x.fillStyle = '#e4f1e9'; x.fillRect(0, 0, SAYFA[0], 120); x.fillStyle = '#1c4f38'; x.font = yaziTipi(36, true); satirlar(x, baslik, 60, 40, SAYFA[0] - 120, 44); };
+      if (kayit && (kayit.tur || '').startsWith('image/')) {
+        try {
+          const bmp = await createImageBitmap(kayit.blob);
+          [c, x] = sayfaTuvali(); ustBant(x);
+          const alanW = SAYFA[0] - 120, alanH = SAYFA[1] - 220, o = Math.min(alanW / bmp.width, alanH / bmp.height);
+          const w = bmp.width * o, h = bmp.height * o; x.drawImage(bmp, (SAYFA[0] - w) / 2, 160, w, h);
+          await tuvaliSayfaYap(doc, c); continue;
+        } catch (e) {}
+      }
+      if (kayit && kayit.tur === 'application/pdf') {
+        try {
+          const kaynak = await PDFDocument.load(await kayit.blob.arrayBuffer(), { ignoreEncryption: true });
+          const sayfalar = await doc.copyPages(kaynak, kaynak.getPageIndices());
+          sayfalar.forEach(sp => doc.addPage(sp)); continue;
+        } catch (e) {}
+      }
+      [c, x] = sayfaTuvali(); ustBant(x); x.fillStyle = '#a8362a'; x.font = yaziTipi(32, false);
+      satirlar(x, 'Bu belge birleştirilemedi. Başvuru sayfasından belgeyi ayrıca indirebilirsin.', 60, 200, SAYFA[0] - 120, 44);
+      await tuvaliSayfaYap(doc, c);
+    }
+    const bytes = await doc.save();
+    await kaydetPaylas(`${dosyaAdi(b.ad)} - başvuru belgeleri.pdf`, new Blob([bytes], { type: 'application/pdf' }));
+  } catch (e) { toast(e.message || 'PDF hazırlanamadı.'); }
+  if (btn) { btn.disabled = false; btn.innerHTML = eski; }
+}
+
+/* ---------- Yardımcılar ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const TL = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 0, maximumFractionDigits: 2 });
+const para = n => TL.format(n || 0);
+const fo = n => Number(n).toLocaleString('tr-TR', { maximumFractionDigits: 2 });
+const TARIH = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+const GUN_UZUN = new Intl.DateTimeFormat('tr-TR', { weekday: 'long' });
+function tarihAl(x) {
+  if (!x) return null;
+  if (x instanceof Date) return x;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(x)) { const [y, m, g] = x.split('-').map(Number); return new Date(y, m - 1, g); }
+  const d = new Date(x); return isNaN(d) ? null : d;
+}
+function tarihYaz(x) { const d = tarihAl(x); return d ? TARIH.format(d) : '—'; }   // "15 Kasım 2026"
+function tarihSaat(bas) { return `${gunBaslik(bas.slice(0, 10))}, saat ${bas.slice(11, 16)}`; }
+const saat = bas => bas.slice(11, 16);
+function gunBaslik(g) { const d = tarihAl(g); const w = GUN_UZUN.format(d); return `${w.charAt(0).toLocaleUpperCase('tr-TR') + w.slice(1)}, ${tarihYaz(d)}`; }
+const iki = n => String(n).padStart(2, '0');
+const ayAnahtar = d => `${d.getFullYear()}-${iki(d.getMonth() + 1)}`;
+const isoGun = d => `${d.getFullYear()}-${iki(d.getMonth() + 1)}-${iki(d.getDate())}`;
+function ayAdi(k) { const [y, m] = k.split('-').map(Number); return `${AYLAR[m - 1]} ${y}`; }
+function bugun() { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }
+const gunFark = (a, b) => Math.round((tarihAl(b) - tarihAl(a)) / 86400000);
+function sayiAl(v) {
+  let t = String(v ?? '').replace(/[^\d.,]/g, '');
+  if (!t) return null;
+  if (t.includes(',')) t = t.replace(/\./g, '').replace(',', '.');
+  else if (/^\d{1,3}(\.\d{3})+$/.test(t)) t = t.replace(/\./g, '');
+  const n = parseFloat(t);
+  return isFinite(n) ? n : null;
+}
+const sayiInput = n => (n == null || n === '' ? '' : Number(n).toLocaleString('tr-TR', { maximumFractionDigits: 2 }));
+/* Tutar alanında yazarken binlik nokta: 25000 → 25.000 */
+function tutarBicimle(v) {
+  let t = String(v).replace(/[^\d,]/g, '');
+  const i = t.indexOf(',');
+  let tam = i < 0 ? t : t.slice(0, i), kes = i < 0 ? null : t.slice(i + 1).replace(/,/g, '').slice(0, 2);
+  tam = tam.replace(/^0+(?=\d)/, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  return kes == null ? tam : tam + ',' + kes;
+}
+document.addEventListener('input', e => {
+  const el = e.target;
+  if (!el.classList || !el.classList.contains('tutar')) return;
+  const imlec = el.selectionStart ?? el.value.length;
+  const solRakam = el.value.slice(0, imlec).replace(/[^\d,]/g, '').length;
+  const yeni = tutarBicimle(el.value);
+  if (yeni === el.value) return;
+  el.value = yeni;
+  let n = 0, p = 0;
+  while (p < yeni.length && n < solRakam) { if (/[\d,]/.test(yeni[p])) n++; p++; }
+  try { el.setSelectionRange(p, p); } catch (_) {}
+});
+function boyutYaz(b) { if (!b) return ''; return b > 1048576 ? fo(b / 1048576) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB'; }
+function waNo(t) {
+  let d = String(t || '').replace(/\D/g, '');
+  if (!d) return '';
+  if (d.startsWith('00')) d = d.slice(2);
+  if (d.startsWith('0')) d = '9' + d;
+  else if (d.length === 10 && d[0] === '5') d = '90' + d;
+  return d;
+}
+const waLink = (no, metin) => `https://wa.me/${no || ''}?text=${encodeURIComponent(metin)}`;
+async function kopyala(t) {
+  try { await navigator.clipboard.writeText(t); toast('Kopyalandı'); }
+  catch (e) {
+    const a = document.createElement('textarea'); a.value = t; document.body.appendChild(a); a.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch (_) {}
+    a.remove(); toast(ok ? 'Kopyalandı' : 'Kopyalanamadı; metni basılı tutup kopyala.');
+  }
+}
+let TT;
+function toast(m) { const t = $('#toast'); t.textContent = m; t.classList.add('acik'); clearTimeout(TT); TT = setTimeout(() => t.classList.remove('acik'), 3200); }
+const yasal = () => '<p class="yasal">Bilgi amaçlıdır, hukuki danışmanlık değildir.</p>';
+const bulunamadi = () => '<div class="kart bos">Bu kayıt bulunamadı. Silinmiş olabilir.</div><a class="btn ikincil tam" href="#/">Ana sayfaya dön</a>';
+const geri = (href, ad) => `<a class="geri" href="${href}">‹ ${ad}</a>`;
+const ipucu = t => `<p class="ipucu">${ik(IK.bilgi, 22)}<span>${t}</span></p>`;
+const tehlikeBolum = icerik => `<div class="tehlikeBolum"><b>Dikkat</b><p>Bu düğmeler geri alınamaz işlemler yapar. Basınca bir kez daha sorulur.</p><div class="btnlar">${icerik}</div></div>`;
+
+/* ---------- Sayfa içi yönlendirme ---------- */
+let ROTA = '';
+function git(h, yerine) {
+  ROTA = String(h || '').replace(/^#\/?/, '');
+  try { history[yerine ? 'replaceState' : 'pushState']({ rota: ROTA }, ''); } catch (e) {}
+  render();
+}
+/* Telefonun geri tuşu / geri hareketi bir önceki ekrana döner */
+window.addEventListener('popstate', e => {
+  if (!$('#modal').hidden) modalKapat();
+  ROTA = (e.state && typeof e.state.rota === 'string') ? e.state.rota : '';
+  render();
+});
+document.addEventListener('click', e => {
+  const a = e.target.closest && e.target.closest('a[href^="#/"]');
+  if (a) { e.preventDefault(); git(a.getAttribute('href')); return; }
+  if (!(e.target.closest && e.target.closest('.combo'))) odaKapat();
+});
+
+/* ---------- Onay penceresi (sayfanın içinde) ---------- */
+function modalKapat() { $('#modal').hidden = true; $('#modalIcerik').innerHTML = ''; }
+function onayla(metin, evet = 'Evet', tehlike = true) {
+  return new Promise(ok => {
+    $('#modalIcerik').innerHTML = `<p style="font-size:19px">${esc(metin)}</p><div class="btnlar"><button class="btn ${tehlike ? 'tehlike' : ''}" id="mEvet">${esc(evet)}</button><button class="btn ikincil" id="mHayir">Vazgeç</button></div>`;
+    $('#modal').hidden = false;
+    $('#mEvet').onclick = () => { modalKapat(); ok(true); };
+    $('#mHayir').onclick = () => { modalKapat(); ok(false); };
+    $('#mHayir').focus();
+  });
+}
+
+/* ---------- İkonlar ---------- */
+const ik = (p, s = 24) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const IK = {
+  ev: '<path d="M3 11 12 4l9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  ara: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  belge: '<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+  takvim: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  ayar: '<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',
+  zil: '<path d="M6 16v-5a6 6 0 1 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+  anahtar: '<circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M17 6l3 3M15 8l2 2"/>',
+  kalem: '<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+  bilgi: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/>',
+  tik: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+  kamera: '<path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.5"/>',
+  paylas: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>',
+  indir: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
+  klasor: '<path d="M3 7a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>'
+};
+const LOGO = '<svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#2b7553"/><path d="M256 118 108 236v158h108v-98h80v98h108V236z" fill="#fff"/></svg>';
+
+/* ---------- Oranlar ---------- */
+const oranAl = ay => (S.oranlar[ay] == null ? null : Number(S.oranlar[ay]));
+async function oranlariYukle() {
+  try {
+    const r = await fetch('oranlar.json', { cache: 'no-cache' });
+    if (!r.ok) return;
+    const j = await r.json();
+    S.oranlar = Object.assign({}, S.oranlar, j);
+    kaydet();
+    if (['', 'ayarlar', 'mesaj'].includes(ROTA.split('/')[0])) render();
+  } catch (e) {}
+}
+
+/* ---------- Yenileme hesabı ---------- */
+function yildonumu(bas, n) {
+  const b = tarihAl(bas);
+  const d = new Date(b.getFullYear() + n, b.getMonth(), b.getDate());
+  if (d.getMonth() !== b.getMonth()) d.setDate(0); // 29 Şubat → 28 Şubat
+  return d;
+}
+function yenileme(s) {
+  const t = bugun();
+  let n = 1;
+  while (yildonumu(s.baslangic, n) < t) n++;
+  const tarih = yildonumu(s.baslangic, n);
+  const ay = ayAnahtar(tarih);
+  const ob = oranBul(ay);
+  return {
+    n,                                  // içinde bulunulan kira yılı (yenilemede n yıl dolar)
+    tarih,
+    kalan: gunFark(t, tarih),
+    ay,
+    oran: ob.oran,
+    kaynakAy: ob.kaynakAy,              // oranın alındığı ay
+    tahmini: ob.tahmini,                // yenileme ayının oranı yoksa son açıklanan oran kullanılır
+    yeni: ob.oran != null ? Math.round(s.kira * (1 + ob.oran / 100) * 100) / 100 : null
+  };
+}
+/* Yenileme ayının oranı yoksa, ondan önceki en son açıklanan oranla tahmini hesap */
+function oranBul(ay) {
+  const o = oranAl(ay);
+  if (o != null) return { oran: o, kaynakAy: ay, tahmini: false };
+  const onceki = Object.keys(S.oranlar).filter(k => k < ay && S.oranlar[k] != null).sort().pop();
+  return onceki ? { oran: Number(S.oranlar[onceki]), kaynakAy: onceki, tahmini: true } : { oran: null, kaynakAy: null, tahmini: false };
+}
+const tahminEki = y => (y.tahmini ? ' (tahmini)' : '');
+function tahminNotu(y) {
+  return y.tahmini ? `${ayAdi(y.ay)} oranı henüz açıklanmadı. Hesap, açıklanan son oran olan ${ayAdi(y.kaynakAy)} oranıyla yapıldı. ${ayAdi(y.ay)} oranı açıklanınca kendiliğinden güncellenir.` : '';
+}
+
+/* ---------- Bildirimler ---------- */
+function bildir(rol, metin, link) {
+  S.bildirimler.unshift({ id: uid(), rol, metin, link: link || '#/', tarih: new Date().toISOString(), okundu: false });
+  S.bildirimler = S.bildirimler.slice(0, 200);
+  kaydet();
+  sistemBildirimi(metin);
+}
+async function sistemBildirimi(metin) {
+  if (CLAUDE_ICINDE || !('Notification' in window) || Notification.permission !== 'granted') return;
+  try { const reg = navigator.serviceWorker && await navigator.serviceWorker.getRegistration(); if (reg) reg.showNotification('Kira Defteri', { body: metin, icon: 'icon-192.png', badge: 'icon-192.png' }); else new Notification('Kira Defteri', { body: metin }); } catch (e) {}
+}
+async function bildirimIzni() {
+  if (!('Notification' in window)) return toast('Bu telefon bildirimleri desteklemiyor.');
+  const r = await Notification.requestPermission();
+  toast(r === 'granted' ? 'Telefon bildirimleri açık' : 'İzin verilmedi'); render();
+}
+function hatirlaticilar() {
+  let d = false;
+  S.sozlesmeler.forEach(s => {
+    const y = yenileme(s), k = isoGun(y.tarih);
+    if (y.kalan <= 30 && s.uyari30 !== k) {
+      s.uyari30 = k; d = true;
+      bildir(s.rol, `${s.ad}: kira yenilemesine ${y.kalan === 0 ? 'bugün' : y.kalan + ' gün kaldı'} (${tarihYaz(y.tarih)}).`, '#/');
+    }
+  });
+  const simdi = Date.now();
+  S.slotlar.forEach(x => {
+    if (x.durum !== 'dolu' || x.hat24) return;
+    const t = new Date(x.bas).getTime();
+    if (t > simdi && t - simdi <= 86400000) {
+      x.hat24 = true; d = true;
+      const i = S.ilanlar.find(a => a.id === x.ilanId), b = S.basvurular.find(a => a.id === x.basvuruId);
+      bildir('evsahibi', `Yaklaşan görüşme: ${b ? b.ad : ''}, ${i ? i.baslik : ''}. ${tarihSaat(x.bas)}`, '#/randevular');
+      bildir('kiraci', `Görüşme hatırlatması: ${i ? i.baslik : ''}. ${tarihSaat(x.bas)}`, '#/basvuru/' + x.basvuruId);
+    }
+  });
+  if (d) kaydet();
+}
+
+/* ---------- Gömülü ay takvimi (açılır pencere değil) ---------- */
+const HAFTA = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+function takvimCiz(o) {
+  const { ay, secili = [], isaretli = new Set(), secilebilir = null, tikla, gezin, yilGezin = null, serbest = false, sinirAy = 6 } = o;
+  const b = bugun(), ilkAy = new Date(b.getFullYear(), b.getMonth(), 1);
+  const son = new Date(ilkAy.getFullYear(), ilkAy.getMonth() + sinirAy, 1);
+  const y = ay.getFullYear(), m = ay.getMonth();
+  const oncekiKapali = serbest ? y <= b.getFullYear() - 30 && m === 0 : ay <= ilkAy;
+  const sonrakiKapali = serbest ? new Date(y, m + 1, 1) > new Date(b.getFullYear() + 1, 11, 1) : new Date(y, m + 1, 1) >= son;
+  const bosluk = (new Date(y, m, 1).getDay() + 6) % 7, gunSay = new Date(y, m + 1, 0).getDate();
+  let h = '';
+  for (let k = 0; k < bosluk; k++) h += '<span></span>';
+  for (let g = 1; g <= gunSay; g++) {
+    const d = new Date(y, m, g), iso = isoGun(d);
+    const kapali = (!serbest && d < b) || (secilebilir && !secilebilir.has(iso));
+    const sec = secili.includes(iso);
+    const sinif = ['tg', sec ? 'secili' : '', isaretli.has(iso) ? 'isaret' : '', +d === +b ? 'bugun' : ''].filter(Boolean).join(' ');
+    h += `<button type="button" class="${sinif}" ${kapali ? 'disabled' : ''} aria-pressed="${sec}" aria-label="${gunBaslik(iso)}" onclick="${tikla}('${iso}')">${g}</button>`;
+  }
+  const yilSatir = yilGezin ? `<div class="yilSatir"><button type="button" onclick="${yilGezin}(-1)" ${y <= b.getFullYear() - 30 ? 'disabled' : ''}>‹ ${y - 1}</button><span>Yıl: <b>${y}</b></span><button type="button" onclick="${yilGezin}(1)" ${y >= b.getFullYear() + 1 ? 'disabled' : ''}>${y + 1} ›</button></div>` : '';
+  return `<div class="takvim">${yilSatir}<div class="takvimUst">
+      <button type="button" onclick="${gezin}(-1)" aria-label="Önceki ay" ${oncekiKapali ? 'disabled' : ''}>‹</button>
+      <b>${AYLAR[m]} ${y}</b>
+      <button type="button" onclick="${gezin}(1)" aria-label="Sonraki ay" ${sonrakiKapali ? 'disabled' : ''}>›</button></div>
+    <div class="takvimIzgara">${HAFTA.map(x => `<span class="hg">${x}</span>`).join('')}${h}</div></div>`;
+}
+
+/* ---------- Tanıtım ve rol ---------- */
+let TANITIM = 0;
+const TANITIM_SAYFALAR = [
+  ['ev', "Kira Defteri'ne hoş geldin", 'Kiranı, yenileme tarihini ve ödemelerini tek yerden takip edersin. Yasal olarak en fazla ne kadar artış yapılabileceğini uygulama senin için hesaplar.'],
+  ['anahtar', 'Ev bul, ev ver', 'Ev sahibiysen ilan verir, görüşme saatlerini belirlersin. Kiracıysan başvurur, belgelerini yükler ve sana uyan saati seçersin.'],
+  ['zil', 'Unutmaman için hatırlatır', 'Kira yenilemesi yaklaşınca, başvurunun durumu değişince ve görüşmeden bir gün önce "Bildirimler" bölümünde sana haber verir.']
+];
+function ekranTanitim() {
+  const [ic, b, t] = TANITIM_SAYFALAR[TANITIM], son = TANITIM === TANITIM_SAYFALAR.length - 1;
+  return `<section class="giris"><div class="tanitimIkon">${ik(IK[ic], 64)}</div>
+    <h1>${b}</h1><p>${t}</p>
+    <div class="noktalar" aria-label="Sayfa ${TANITIM + 1} / ${TANITIM_SAYFALAR.length}">${TANITIM_SAYFALAR.map((_, n) => `<i class="${n === TANITIM ? 'aktif' : ''}"></i>`).join('')}</div>
+    <button class="btn tam buyukBtn" onclick="tanitimIleri()">${son ? 'Başla' : 'İleri'}</button>
+    ${TANITIM > 0 ? '<button class="btn ikincil tam" onclick="TANITIM--;render()">Geri</button>' : ''}
+    ${son ? '' : '<button class="btn ikincil tam" onclick="tanitimBitir()">Tanıtımı geç</button>'}</section>`;
+}
+function tanitimIleri() { if (TANITIM < TANITIM_SAYFALAR.length - 1) { TANITIM++; render(); } else tanitimBitir(); }
+function tanitimBitir() { S.tanitim = true; TANITIM = 0; kaydet(); git('#/'); }
+function tanitimTekrar() { S.tanitim = false; TANITIM = 0; kaydet(); git('#/'); }
+
+function ekranRol() {
+  return `<section class="giris"><div class="logo">${LOGO}</div><h1>Uygulamayı nasıl kullanacaksın?</h1><p>Birini seç. İstediğin zaman Ayarlar'dan değiştirebilirsin.</p></section>
+  <button class="rolBtn" onclick="rolSec('kiraci')"><b>Kiracıyım</b><span>Kiramı ve ödemelerimi takip edeceğim, ev arayacağım.</span></button>
+  <button class="rolBtn" onclick="rolSec('evsahibi')"><b>Ev sahibiyim</b><span>Evimi kiraya veriyorum; kirayı takip edeceğim, ilan vereceğim.</span></button>`;
+}
+function rolSec(r) { S.rol = r; kaydet(); hatirlaticilar(); toast(r === 'kiraci' ? 'Kiracı olarak kullanıyorsun' : 'Ev sahibi olarak kullanıyorsun'); git('#/'); }
+function rolDegistir() { rolSec(S.rol === 'kiraci' ? 'evsahibi' : 'kiraci'); }
+const rolAdi = r => (r === 'kiraci' ? 'Kiracı' : 'Ev sahibi');
+const rolSerit = () => `<div class="rolSerit"><span><b>${rolAdi(S.rol)}</b> olarak kullanıyorsun</span><button class="btn kucuk ikincil" onclick="rolDegistir()">${rolAdi(S.rol === 'kiraci' ? 'evsahibi' : 'kiraci')} olarak kullan</button></div>`;
+
+/* ---------- Ana sayfa ---------- */
+function yilNotu(s, y) {
+  if (!(y.n === 5 || y.n === 10) || y.kalan > 120) return '';
+  const metin = y.n === 5
+    ? `Bu sözleşme ${tarihYaz(y.tarih)} tarihinde 5. kira yılını dolduruyor. Türk Borçlar Kanunu m. 344/3'e göre beş yılı aşan kira ilişkilerinde ve her beş yılın sonunda, yeni kira yılının bedeli taraflarca kararlaştırılmamışsa hâkim tarafından TÜFE'nin on iki aylık ortalamasına göre değişim oranı, kiralananın durumu ve emsal kira bedelleri göz önünde tutularak hakkaniyete uygun biçimde belirlenir.`
+    : `Bu sözleşme ${tarihYaz(y.tarih)} tarihinde 10. kira yılını dolduruyor. Türk Borçlar Kanunu m. 347'ye göre konut kiralarında kiraya veren, sözleşme süresinin bitiminden itibaren başlayan on yıllık uzama süresi sonunda, bu süreyi izleyen her uzama yılının bitiminden en az üç ay önce bildirimde bulunmak koşuluyla, herhangi bir sebep göstermeksizin sözleşmeye son verebilir. On yıllık uzama süresi ilk sözleşme süresinin bitiminden itibaren işler.`;
+  return `<div class="kart bilgiNot"><div class="uyariUst">Bilgi notu · ${esc(s.ad)}</div><p style="margin:0">${metin}</p></div>`;
+}
+function istenenBlok(s, y) {
+  const ist = s.istenenKira;
+  let d = '';
+  if (ist) {
+    if (y.yeni == null) d = `<p class="durum sari">Oran henüz açıklanmadı; karşılaştırma yapılamıyor.</p>`;
+    else if (ist > y.yeni + 0.005) d = `<p class="durum kirmizi">İstenen kira yasal sınırı <b>${para(ist - y.yeni)}</b> aşıyor. Yasal en fazla${tahminEki(y)}: <b>${para(y.yeni)}</b>. İstenen artış %${fo((ist / s.kira - 1) * 100)}.</p>`;
+    else d = `<p class="durum yesil">İstenen kira yasal sınırın içinde. Yasal en fazla${tahminEki(y)}: ${para(y.yeni)}.</p>`;
+  }
+  return `<label class="alan" for="ist_${s.id}">Ev sahibi ne kadar istiyor?<input id="ist_${s.id}" inputmode="decimal" class="tutar" placeholder="ör. 72.000" value="${sayiInput(ist)}" onchange="istenenKaydet('${s.id}',this.value)"></label>${d}`;
+}
+function istenenKaydet(id, v) { const s = bul(id); if (!s) return; s.istenenKira = sayiAl(v); kaydet(); render(); }
+function sozlesmeKarti(s, y) {
+  const yilBas = yildonumu(s.baslangic, y.n - 1);
+  const top = Math.max(1, gunFark(yilBas, y.tarih));
+  const p = Math.min(100, Math.max(0, 100 * (1 - y.kalan / top)));
+  const kt = s.karsiTaraf ? esc(s.karsiTaraf) + ' · ' : '';
+  return `<div class="kart">
+    <div class="kartUst"><div style="min-width:0"><b class="kartBaslik">${esc(s.ad)}</b><div class="soluk kucukYazi">${kt}${y.n}. kira yılı · başlangıç ${tarihYaz(s.baslangic)}</div></div>
+    <a class="ikonBtn" href="#/sozlesme/${s.id}">${ik(IK.kalem, 20)}Düzenle</a></div>
+    <div class="ozet"><div><small>Şu anki kira</small><b>${para(s.kira)}</b></div><div><small>Kira yenileme günü</small><b>${tarihYaz(y.tarih)}</b></div></div>
+    <div class="geriSayim"><div class="ilerleme" aria-hidden="true"><i style="width:${p.toFixed(1)}%"></i></div><span>${y.kalan === 0 ? 'Yenileme bugün' : y.kalan + ' gün kaldı'}</span></div>
+    <div class="yeniKira ${y.tahmini ? 'tahmini' : ''}">${y.oran != null
+      ? `<div><small>${y.tahmini ? 'Tahmini en fazla artış' : 'Yasal en fazla artış'}</small><b>%${fo(y.oran)}</b></div><div><small>${y.tahmini ? 'Yeni kira en fazla (tahmini)' : 'Yeni kira en fazla'}</small><b class="vurgu">${para(y.yeni)}</b></div>${y.tahmini ? `<p class="tahminNot">${tahminNotu(y)}</p>` : ''}`
+      : `<p>${ayAdi(y.ay)} oranı henüz açıklanmadı.</p>`}</div>
+    ${s.rol === 'kiraci' ? istenenBlok(s, y) : ''}
+    <div class="btnlar"><a class="btn ikincil" href="#/odeme/${s.id}">Ödemeler</a><a class="btn ikincil" href="#/mesaj/${s.id}">Hazır mesaj</a></div>
+  </div>`;
+}
+function yaklasanRandevular() {
+  const simdi = Date.now();
+  return S.slotlar.filter(x => x.durum === 'dolu' && new Date(x.bas).getTime() + x.sure * 60000 > simdi).sort((a, b) => a.bas.localeCompare(b.bas));
+}
+function ekranAna() {
+  const sz = S.sozlesmeler.filter(s => s.rol === S.rol).map(s => ({ s, y: yenileme(s) })).sort((a, b) => a.y.kalan - b.y.kalan);
+  let h = rolSerit();
+  h += `<div class="baslikSatir"><h2 class="baslik">${S.rol === 'kiraci' ? 'Kiraladığım evler' : 'Kiraya verdiğim evler'}</h2></div>`;
+  h += yukleKarti();
+  h += ipucu(S.rol === 'kiraci'
+    ? 'Kira yenileme gününü ve yasal olarak en fazla ne kadar artış yapılabileceğini burada görürsün.'
+    : 'Kiraya verdiğin evler, bekleyen başvurular ve yaklaşan görüşmeler burada.');
+
+  if (S.rol === 'evsahibi') {
+    const bek = S.basvurular.filter(b => b.durum === 'beklemede').length, ry = yaklasanRandevular().length;
+    if (bek || ry) h += `<div class="hizli">${bek ? `<a class="kart mini" href="#/basvurular"><b>${bek}</b><span>bekleyen başvuru</span></a>` : ''}${ry ? `<a class="kart mini" href="#/randevular"><b>${ry}</b><span>yaklaşan görüşme</span></a>` : ''}</div>`;
+  } else {
+    const r = yaklasanRandevular()[0];
+    if (r) { const i = S.ilanlar.find(a => a.id === r.ilanId); h += `<a class="kart" href="#/basvuru/${r.basvuruId}"><div class="uyariUst" style="color:var(--yesilK)">Yaklaşan ev görüşmesi</div><b>${esc(i ? i.baslik : '')}</b><div class="soluk">${tarihSaat(r.bas)}</div></a>`; }
+  }
+
+  sz.filter(x => x.y.kalan <= 30).forEach(({ s, y }) => {
+    h += `<div class="kart uyari"><div class="uyariUst">Kira yenilemesine ${y.kalan === 0 ? 'bugün' : y.kalan + ' gün kaldı'}</div>
+      <b>${esc(s.ad)}</b> · ${tarihYaz(y.tarih)}
+      <p style="margin:6px 0 0">${y.oran != null ? `Yeni kira en fazla <b>${para(y.yeni)}</b> olabilir${tahminEki(y)}.${y.tahmini ? `<br><small>${tahminNotu(y)}</small>` : ''}` : 'Oran henüz açıklanmadı.'}</p>
+      <div class="btnlar"><a class="btn" href="#/mesaj/${s.id}">Hazır mesaja bak</a></div></div>`;
+  });
+  sz.forEach(({ s, y }) => { h += yilNotu(s, y); });
+
+  if (!sz.length) h += `<div class="kart bos">Henüz ev eklemedin.<br>Kira sözleşmendeki bilgileri girerek başla.</div>`;
+  sz.forEach(({ s, y }) => { h += sozlesmeKarti(s, y); });
+  h += `<a class="btn tam buyukBtn" href="#/sozlesme-yeni">+ ${sz.length ? 'Başka bir ev ekle' : 'Ev ekle'}</a>`;
+  return h;
+}
+
+/* ---------- Sözleşme formu (gömülü takvimli) ---------- */
+const bul = id => S.sozlesmeler.find(x => x.id === id);
+let SZ = { ay: null, tarih: '' };
+function ekranSozlesmeForm(id) {
+  const s = id ? bul(id) : null;
+  if (id && !s) return bulunamadi();
+  const rol = s ? s.rol : S.rol;
+  const t = s ? s.baslangic : '';
+  const d = t ? tarihAl(t) : bugun();
+  SZ = { tarih: t, ay: new Date(d.getFullYear(), d.getMonth(), 1) };
+  return `${geri('#/', 'Ana sayfa')}<h2 class="baslik">${s ? 'Ev bilgilerini düzenle' : 'Yeni ev ekle'}</h2>
+  ${ipucu('Kira sözleşmendeki bilgileri gir. Kira yenileme günü, başlangıç tarihine göre kendiliğinden hesaplanır.')}
+  <form class="kart" onsubmit="sozlesmeKaydet(event,'${s ? s.id : ''}')" novalidate>
+    <label class="alan" for="szAd">Bu evi nasıl adlandıralım?<input id="szAd" name="ad" maxlength="60" placeholder="ör. Kadıköy 2+1" value="${esc(s && s.ad)}"></label>
+    <div class="alan"><span class="etiket">Sözleşme başlangıç tarihi</span>
+      <input type="hidden" name="baslangic" id="szTarih" value="${esc(t)}">
+      <div class="secilenTarih" id="szSecilen">${t ? 'Seçilen: <b>' + tarihYaz(t) + '</b>' : 'Aşağıdaki takvimden günü seç.'}</div>
+      <div id="szTakvim">${szTakvim()}</div></div>
+    <label class="alan" for="szKira">Şu anki aylık kira (₺)<input id="szKira" name="kira" inputmode="decimal" class="tutar" placeholder="ör. 25.000" value="${s ? sayiInput(s.kira) : ''}"></label>
+    <label class="alan" for="szKarsi">${rol === 'kiraci' ? 'Ev sahibinin adı' : 'Kiracının adı'}<input id="szKarsi" name="karsiTaraf" maxlength="60" value="${esc(s && s.karsiTaraf)}"></label>
+    <label class="alan" for="szTel">${rol === 'kiraci' ? 'Ev sahibinin' : 'Kiracının'} telefonu <span class="soluk" style="font-weight:400">(isteğe bağlı)</span><input id="szTel" name="telefon" type="tel" inputmode="tel" placeholder="05xx xxx xx xx" value="${esc(s && s.telefon)}"></label>
+    <button class="btn tam buyukBtn">Kaydet</button>
+    <a class="btn ikincil tam" href="#/">Vazgeç</a>
+  </form>
+  ${s ? tehlikeBolum(`<button type="button" class="btn tehlike" onclick="sozlesmeSil('${s.id}')">Bu evi ve ödeme kayıtlarını sil</button>`) : ''}`;
+}
+function szTakvim() { return takvimCiz({ ay: SZ.ay, secili: SZ.tarih ? [SZ.tarih] : [], tikla: 'szGun', gezin: 'szAy', yilGezin: 'szYil', serbest: true }); }
+function szCiz() { const el = $('#szTakvim'); if (el) el.innerHTML = szTakvim(); }
+function szGun(iso) { SZ.tarih = iso; $('#szTarih').value = iso; $('#szSecilen').innerHTML = 'Seçilen: <b>' + tarihYaz(iso) + '</b>'; szCiz(); }
+function szAy(d) { SZ.ay = new Date(SZ.ay.getFullYear(), SZ.ay.getMonth() + d, 1); szCiz(); }
+function szYil(d) { SZ.ay = new Date(SZ.ay.getFullYear() + d, SZ.ay.getMonth(), 1); szCiz(); }
+function sozlesmeKaydet(e, id) {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const kira = sayiAl(f.get('kira'));
+  const v = { ad: f.get('ad').trim(), baslangic: f.get('baslangic'), kira, karsiTaraf: f.get('karsiTaraf').trim(), telefon: f.get('telefon').trim() };
+  if (!v.ad) return toast('Eve bir ad ver, ör. "Kadıköy 2+1".');
+  if (!v.baslangic) return toast('Takvimden sözleşme başlangıç gününü seç.');
+  if (!kira || kira <= 0) return toast('Aylık kira tutarını yaz.');
+  if (id) { const s = bul(id); if (s.baslangic !== v.baslangic) s.uyari30 = null; Object.assign(s, v); }
+  else S.sozlesmeler.push(Object.assign({ id: uid(), rol: S.rol, istenenKira: null, uyari30: null, olusturma: new Date().toISOString() }, v));
+  kaydet(); hatirlaticilar(); toast('Kaydedildi'); git('#/');
+}
+async function sozlesmeSil(id) {
+  if (!(await onayla('Bu ev ve tüm ödeme kayıtları silinsin mi?', 'Evet, sil'))) return;
+  S.sozlesmeler = S.sozlesmeler.filter(x => x.id !== id); delete S.odemeler[id];
+  kaydet(); toast('Silindi'); git('#/');
+}
+
+/* ---------- Ödemeler ---------- */
+const ODEME_YIL = {};
+function ekranOdeme(id) {
+  const s = bul(id); if (!s) return bulunamadi();
+  const bas = tarihAl(s.baslangic), simdi = bugun();
+  const yil = ODEME_YIL[id] || simdi.getFullYear();
+  const yillar = []; for (let y = bas.getFullYear(); y <= simdi.getFullYear() + 1; y++) yillar.push(y);
+  const kayit = S.odemeler[id] || {};
+  const basAy = ayAnahtar(bas), buAy = ayAnahtar(simdi);
+  let odenen = 0, toplam = 0; const odenmeyen = []; let satirlar = '';
+  for (let m = 0; m < 12; m++) {
+    const k = `${yil}-${iki(m + 1)}`, o = kayit[k] || {}, aktif = k >= basAy, od = o.durum === 'odendi';
+    if (!aktif) { satirlar += `<div class="ay pasif">${AYLAR[m]} ${yil} · sözleşmeden önce</div>`; continue; }
+    if (od) { odenen++; toplam += o.tutar != null ? o.tutar : s.kira; } else if (k <= buAy) odenmeyen.push(AYLAR[m]);
+    satirlar += `<div class="ay ${od ? 'odendi' : ''}">
+      <div class="ayUst"><b>${AYLAR[m]} ${yil}</b><button class="btn ${od ? '' : 'ikincil'}" aria-pressed="${od}" onclick="odemeDurum('${id}','${k}')">${od ? '✓ Ödendi' : 'Ödenmedi'}</button></div>
+      ${od && o.tarih ? `<div class="soluk kucukYazi">${tarihYaz(o.tarih)} · ${para(o.tutar != null ? o.tutar : s.kira)}${o.not ? ' · ' + esc(o.not) : ''}</div>` : ''}
+      <details><summary>Tarih, tutar ve not</summary>
+        <div class="ikili dar"><label class="alan">Ödeme tarihi<input type="date" value="${esc(o.tarih)}" onchange="odemeAlan('${id}','${k}','tarih',this.value)"></label>
+        <label class="alan">Tutar<input inputmode="decimal" class="tutar" placeholder="${sayiInput(s.kira)}" value="${sayiInput(o.tutar)}" onchange="odemeAlan('${id}','${k}','tutar',this.value)"></label></div>
+        <label class="alan">Not<input maxlength="120" placeholder="ör. havale, eksik ödeme" value="${esc(o.not)}" onchange="odemeAlan('${id}','${k}','not',this.value)"></label>
+      </details>
+    </div>`;
+  }
+  return `${geri('#/', 'Ana sayfa')}<h2 class="baslik">Ödemeler</h2><div class="soluk">${esc(s.ad)}</div>
+    ${ipucu('Kirayı ödediğin ayda "Ödenmedi" düğmesine dokun; "Ödendi" olur. Yanlışlıkla dokunursan bir daha dokun.')}
+    <div class="yilSec">${yillar.map(y => `<button class="${y === yil ? 'secili' : ''}" onclick="ODEME_YIL['${id}']=${y};render()">${y}</button>`).join('')}</div>
+    <div class="kart"><b>${yil} özeti</b><div class="ozetTablo" style="margin-top:10px">
+      <div><b>${odenen}</b><small>ödenen ay</small></div><div><b>${para(toplam)}</b><small>toplam ödenen</small></div><div><b>${odenmeyen.length}</b><small>ödenmemiş ay</small></div></div>
+      ${odenmeyen.length ? `<p class="durum sari">Ödenmemiş görünen: ${odenmeyen.join(', ')}</p>` : ''}</div>
+    ${satirlar}`;
+}
+function odemeKaydi(id, k) { S.odemeler[id] = S.odemeler[id] || {}; return (S.odemeler[id][k] = S.odemeler[id][k] || {}); }
+function odemeDurum(id, k) {
+  const o = odemeKaydi(id, k);
+  if (o.durum === 'odendi') o.durum = 'odenmedi';
+  else { o.durum = 'odendi'; if (!o.tarih) o.tarih = isoGun(new Date()); if (o.tutar == null) o.tutar = bul(id).kira; }
+  kaydet(); render();
+}
+function odemeAlan(id, k, alan, v) {
+  const o = odemeKaydi(id, k);
+  if (alan === 'tutar') o.tutar = sayiAl(v); else o[alan] = v;
+  if (alan === 'tarih' && v && o.durum !== 'odendi') o.durum = 'odendi';
+  kaydet(); render();
+}
+
+/* ---------- Hazır mesajlar ---------- */
+function mesajlar(s) {
+  const y = yenileme(s);
+  const t = tarihYaz(y.tarih), eski = para(s.kira);
+  const oranT = y.oran != null ? `%${fo(y.oran)}${y.tahmini ? ` (${ayAdi(y.ay)} oranı henüz açıklanmadığı için ${ayAdi(y.kaynakAy)} oranıyla tahmini)` : ''}` : '(oran henüz açıklanmadı)';
+  const yeni = y.yeni != null ? para(y.yeni) : '—';
+  if (s.rol === 'evsahibi') {
+    const k = s.karsiTaraf || 'Kiracım';
+    return {
+      nazik: `Merhaba ${k}, umarım iyisinizdir. ${s.ad} için kira sözleşmemiz ${t} tarihinde yenileniyor. Yenileme ayına ait yasal artış tavanı ${oranT}; buna göre yeni aylık kira ${yeni} olacak (mevcut: ${eski}). Sorunuz olursa konuşmaktan memnuniyet duyarım. Teşekkürler.`,
+      resmi: `Sayın ${k},\n\n${s.ad} adresli taşınmaza ilişkin kira sözleşmemiz ${t} tarihinde yenilenecektir. Yenileme dönemine ait, TÜFE'nin on iki aylık ortalamasına dayalı artış oranı ${oranT} olup, yeni dönem aylık kira bedeli ${yeni} olarak uygulanacaktır.\n\nBilgilerinize sunarım.`,
+      kisa: `Merhaba, ${t} itibarıyla kira ${eski} → ${yeni} (${oranT}). Teşekkürler.`
+    };
+  }
+  const k = s.karsiTaraf || 'Ev sahibim';
+  const ist = s.istenenKira, asim = ist && y.yeni != null && ist > y.yeni + 0.005;
+  if (asim) return {
+    nazik: `Merhaba ${k}, umarım iyisinizdir. ${t} tarihindeki yenileme için ${para(ist)} talebinizi aldım. Yenileme ayına ait yasal artış tavanı ${oranT}; buna göre yeni kira en fazla ${yeni} olabiliyor. Yeni kiranın ${yeni} olarak belirlenmesini rica ederim. Anlayışınız için teşekkür ederim.`,
+    resmi: `Sayın ${k},\n\n${s.ad} adresli taşınmaz için talep edilen ${para(ist)} tutarındaki yeni kira bedeli, TÜFE'nin on iki aylık ortalamasına göre ${oranT} olarak belirlenen artış tavanıyla hesaplanan ${yeni} tutarını aşmaktadır. Yeni dönem kira bedelinin ${yeni} olarak uygulanmasını talep ederim.\n\nSaygılarımla.`,
+    kisa: `Merhaba, yasal tavan ${oranT}: ${eski} → en fazla ${yeni}. Talep edilen ${para(ist)}. Yeni kirayı ${yeni} olarak ödeyeceğim, teşekkürler.`
+  };
+  return {
+    nazik: `Merhaba ${k}, umarım iyisinizdir. ${s.ad} için kira sözleşmemiz ${t} tarihinde yenileniyor. Yenileme ayının yasal artış oranı ${oranT}; buna göre yeni kira ${yeni} oluyor. Bu tutarla devam etmek isterim. Teşekkürler.`,
+    resmi: `Sayın ${k},\n\n${s.ad} adresli taşınmaza ilişkin kira sözleşmemiz ${t} tarihinde yenilenecektir. TÜFE'nin on iki aylık ortalamasına göre ${oranT} olan artış oranı uygulandığında yeni dönem aylık kira bedeli ${yeni} olmaktadır. Yeni dönemde bu tutarı ödeyeceğimi bilgilerinize sunarım.\n\nSaygılarımla.`,
+    kisa: `Merhaba, ${t} itibarıyla yeni kira ${yeni} (${oranT}). Teşekkürler.`
+  };
+}
+function ekranMesaj(id) {
+  const s = bul(id); if (!s) return bulunamadi();
+  const m = mesajlar(s), no = waNo(s.telefon);
+  return `${geri('#/', 'Ana sayfa')}<h2 class="baslik">Hazır mesajlar</h2>
+    <div class="soluk">${esc(s.ad)} · yenileme ${tarihYaz(yenileme(s).tarih)}</div>
+    ${ipucu('Sana uyan mesajı seç. İstersen metni değiştir, sonra "Kopyala"ya ya da "WhatsApp ile gönder"e dokun.')}
+    ${[['nazik', 'Nazik'], ['resmi', 'Resmi'], ['kisa', 'Kısa']].map(([k, ad]) => `<div class="kart"><b class="kartBaslik">${ad}</b>
+      <textarea id="m_${k}" aria-label="${ad} mesaj" style="min-height:${k === 'kisa' ? 110 : 190}px">${esc(m[k])}</textarea>
+      <div class="btnlar"><button class="btn" onclick="kopyala(document.getElementById('m_${k}').value)">Kopyala</button>
+      <a class="btn ikincil" target="_blank" rel="noopener" href="#" onclick="this.href=waLink('${no}',document.getElementById('m_${k}').value)">WhatsApp ile gönder</a></div></div>`).join('')}
+    ${no ? '' : '<p class="soluk kucukYazi">Eve telefon numarası eklersen WhatsApp doğrudan o kişiyle açılır.</p>'}`;
+}
+
+/* ---------- İlanlar ---------- */
+function gelecekSlotlar(ilanId) {
+  const simdi = new Date();
+  return S.slotlar.filter(x => x.ilanId === ilanId && new Date(x.bas) > simdi).sort((a, b) => a.bas.localeCompare(b.bas));
+}
+function gunlereAyir(arr) { const g = {}; arr.forEach(x => (g[x.bas.slice(0, 10)] = g[x.bas.slice(0, 10)] || []).push(x)); return g; }
+function ekranIlanlar() {
+  const ev = S.rol === 'evsahibi';
+  const list = S.ilanlar.filter(i => ev || i.durum === 'yayinda').sort((a, b) => b.olusturma.localeCompare(a.olusturma));
+  let h = `<h2 class="baslik">${ev ? 'İlanlarım' : 'Ev bul'}</h2>`;
+  h += ipucu(ev ? 'Kiraya vermek istediğin evi ilan olarak ekle. Kiracılar başvurur ve görüşme saati seçer.' : 'Kiralık evlere göz at. Beğendiğine dokun, başvur ve görüşme saati seç.');
+  if (ev) h += '<a class="btn tam buyukBtn" href="#/ilan-form">+ Yeni ilan ver</a>';
+  if (!list.length) h += `<div class="kart bos">${ev ? 'Henüz ilan vermedin.' : 'Şu an görüntülenecek ilan yok.'}</div>`;
+  list.forEach(i => {
+    const bv = S.basvurular.filter(b => b.ilanId === i.id).length;
+    const bosS = gelecekSlotlar(i.id).filter(x => x.durum === 'bos').length;
+    const detay = [i.oda, i.m2 ? i.m2 + ' m²' : '', i.kat ? 'Kat ' + i.kat : ''].filter(Boolean).map(esc).join(' · ');
+    h += `<a class="kart ilanKart" href="#/ilan/${i.id}">
+      ${i.fotolar && i.fotolar[0] ? `<img data-dosya="${i.fotolar[0]}" alt="">` : '<div class="fotoYok">Fotoğraf yok</div>'}
+      <div class="ilanBilgi"><b>${esc(i.baslik)}</b><div class="soluk kucukYazi">${esc(i.adres)}</div>
+      <div class="fiyat">${para(i.kira)} <small>/ ay</small></div><div class="soluk kucukYazi">${detay}</div>
+      <div class="cipler">${ev ? `<span class="cip ${i.durum === 'yayinda' ? '' : 'gri'}">${i.durum === 'yayinda' ? 'Yayında' : 'Gizli'}</span><span class="cip gri">${bv} başvuru</span>` : ''}<span class="cip gri">${bosS} boş görüşme saati</span></div></div></a>`;
+  });
+  if (!ev) h += '<p class="soluk kucukYazi">Bu sürümde ilanlar ve başvurular yalnızca bu cihazda tutulur.</p>';
+  return h;
+}
+
+/* Ev sahibi: görüşme saatleri (çoklu gün, büyük saat düğmeleri) */
+let SF = { ilanId: null, gunler: [], ay: null, saatler: [], sure: 30 };
+const SAATLER = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
+const DILIMLER = [['Sabah', '09:00', '12:00'], ['Öğleden sonra', '12:00', '17:00'], ['Akşam', '17:00', '21:00']];
+function sfHazirla(ilanId) {
+  if (SF.ilanId === ilanId) return;
+  const b = bugun();
+  SF = { ilanId, gunler: [], ay: new Date(b.getFullYear(), b.getMonth(), 1), saatler: [], sure: 30, haric: [] };
+}
+/* Yalnızca bugün seçiliyse, geçmiş saatler kapanır */
+const saatKapali = s => SF.gunler.length === 1 && SF.gunler[0] === isoGun(new Date()) && new Date(`${SF.gunler[0]}T${s}`).getTime() + 3600000 <= Date.now();
+function sfGun(iso) { SF.gunler = SF.gunler.includes(iso) ? SF.gunler.filter(g => g !== iso) : [...SF.gunler, iso].sort(); SF.saatler = SF.saatler.filter(s => !saatKapali(s)); render(); }
+function gunUyar() {
+  const el = $('#sfTakvim'); if (!el) return;
+  const sakin = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  el.scrollIntoView({ behavior: sakin ? 'auto' : 'smooth', block: 'center' });
+  el.classList.remove('isikla'); void el.offsetWidth; el.classList.add('isikla');
+  toast('Önce takvimden bir gün seç');
+}
+function sfGunTemizle() { SF.gunler = []; render(); }
+function sfAy(d) { SF.ay = new Date(SF.ay.getFullYear(), SF.ay.getMonth() + d, 1); render(); }
+const haricTemizle = saatler => { SF.haric = (SF.haric || []).filter(b => !saatler.includes(b.slice(11, 13) + ':00')); };
+function sfSaat(s) { haricTemizle([s]); SF.saatler = SF.saatler.includes(s) ? SF.saatler.filter(x => x !== s) : [...SF.saatler, s]; render(); }
+function sfDilim(a, b) {
+  const grup = SAATLER.filter(s => s >= a && s < b && !saatKapali(s));
+  const hepsi = grup.every(s => SF.saatler.includes(s));
+  haricTemizle(grup);
+  SF.saatler = hepsi ? SF.saatler.filter(s => !grup.includes(s)) : [...new Set([...SF.saatler, ...grup])];
+  render();
+}
+function sfSure(d) { SF.sure = d; SF.haric = []; render(); }
+/* Dilimin tüm saatleri seçiliyse dilim düğmesi de koyu yeşil olur */
+const dilimSecili = (a, b) => { const grup = SAATLER.filter(s => s >= a && s < b && !saatKapali(s)); return grup.length > 0 && grup.every(s => SF.saatler.includes(s)); };
+/* Özet kutusundan tek bir saati veya bütün bir günü çıkarma */
+function sfCikar(bas) { SF.haric = [...(SF.haric || []), bas]; render(); }
+function sfGunCikar(gun) { SF.gunler = SF.gunler.filter(g => g !== gun); render(); }
+function sfSlotlar() {
+  const simdi = new Date(), out = [];
+  SF.gunler.forEach(gun => [...SF.saatler].sort().forEach(s => {
+    const h = Number(s.slice(0, 2));
+    for (let m = 0; m < 60; m += SF.sure) { const bas = `${gun}T${iki(h)}:${iki(m)}`; if (new Date(bas) > simdi && !(SF.haric || []).includes(bas)) out.push(bas); }
+  }));
+  return out;
+}
+function sfOzet() {
+  if (!SF.gunler.length) return 'Önce takvimden bir veya birkaç gün seç.';
+  if (!SF.saatler.length) return `<b>${SF.gunler.length} gün seçtin.</b><p>Şimdi saatleri seç.</p>`;
+  const g = gunlereAyir(sfSlotlar().map(bas => ({ bas })));
+  const satirlar = Object.entries(g).map(([d, arr]) => `<div class="ozetGun"><div class="ozetGunUst"><b>${gunBaslik(d)}</b><button type="button" class="cikarBtn" onclick="sfGunCikar('${d}')" aria-label="${gunBaslik(d)} gününü çıkar">Günü çıkar ✕</button></div>
+    <div class="secimCipler">${arr.map(x => `<button type="button" class="secimCip" onclick="sfCikar('${x.bas}')" aria-label="${saat(x.bas)} saatini çıkar">${saat(x.bas)} <span aria-hidden="true">✕</span></button>`).join('')}</div></div>`).join('');
+  return `<b>Toplam ${sfSlotlar().length} görüşme saati eklenecek</b><p class="kucukYazi" style="margin:2px 0 0">İstemediğin saatin üstüne dokunarak çıkarabilirsin.</p>${satirlar || '<p>Seçtiğin saatler geçmişte kalıyor ya da hepsini çıkardın.</p>'}`;
+}
+function slotEditor(i) {
+  sfHazirla(i.id);
+  const mevcut = gelecekSlotlar(i.id);
+  const g = gunlereAyir(mevcut);
+  const hazir = sfSlotlar().length > 0;
+  const gunVar = SF.gunler.length > 0;
+  return `<div class="kart"><b class="kartBaslik">Görüşme saatleri</b>
+    <p class="soluk" style="margin:4px 0 0">Kiracılar buradan eklediğin saatlerden birini seçer; sana bildirim gelir.</p>
+    <div class="adim"><span class="adimNo">1</span><span class="adimMetin"><b>Gün seç</b><small>Birden fazla gün seçebilirsin</small></span></div>
+    <div id="sfTakvim" class="${gunVar ? '' : 'baslaBurada'}">${gunVar ? '' : '<div class="baslaEtiket">Buradan başla: bir gün seç ↓</div>'}${takvimCiz({ ay: SF.ay, secili: SF.gunler, isaretli: new Set(Object.keys(g)), tikla: 'sfGun', gezin: 'sfAy' })}</div>
+    <p class="soluk kucukYazi" style="margin:8px 0 0">Altında yeşil nokta olan günlere daha önce saat eklemişsin.</p>
+    ${SF.gunler.length > 1 ? `<button type="button" class="btn ikincil kucuk" style="margin-top:8px" onclick="sfGunTemizle()">Gün seçimini temizle (${SF.gunler.length} gün)</button>` : ''}
+    <div class="adim"><span class="adimNo">2</span><span class="adimMetin"><b>Saat seç</b><small>Birden fazla saat seçebilirsin</small></span></div>
+    ${gunVar ? '' : '<p class="durum sari" style="margin:0 0 10px">↑ Saat seçmeden önce yukarıdaki takvimden bir gün seç.</p>'}
+    <div class="hizliSec ${gunVar ? '' : 'beklemedeGrup'}">${DILIMLER.map(([ad, a, b]) => `<button type="button" class="btn ikincil ${dilimSecili(a, b) ? 'secili' : ''}" aria-pressed="${dilimSecili(a, b)}" onclick="${gunVar ? `sfDilim('${a}','${b}')` : 'gunUyar()'}">${ad}<small>${a}–${b}</small></button>`).join('')}</div>
+    <div class="saatIzgara">${SAATLER.map(s => { const sec = SF.saatler.includes(s); return `<button type="button" class="saatBuyuk ${sec ? 'secili' : ''} ${gunVar ? '' : 'beklemede'}" aria-pressed="${sec}" onclick="${gunVar ? `sfSaat('${s}')` : 'gunUyar()'}" ${gunVar && saatKapali(s) ? 'disabled' : ''}>${s}</button>`; }).join('')}</div>
+    <div class="adim"><span class="adimNo">3</span><b>Her görüşme ne kadar sürsün?</b></div>
+    <div class="segment">${[15, 30, 60].map(d => `<button type="button" class="${SF.sure === d ? 'secili' : ''}" aria-pressed="${SF.sure === d}" onclick="sfSure(${d})">${d === 60 ? '1 saat' : d + ' dk'}</button>`).join('')}</div>
+    <div class="ozetKutu">${sfOzet()}</div>
+    <button type="button" class="btn tam buyukBtn" onclick="slotEkle('${i.id}')" ${hazir ? '' : 'disabled'}>Bu saatleri ekle</button>
+    <div class="adim"><b>Eklediğin saatler</b></div>
+    ${Object.entries(g).map(([d, arr]) => `<div class="gunGrup"><div class="gunBaslik">${gunBaslik(d)}</div><div class="saatler">${arr.map(x => x.durum === 'bos'
+      ? `<button class="saat" onclick="slotSil('${x.id}')" aria-label="${saat(x.bas)} saatini sil">${saat(x.bas)} ✕</button>`
+      : `<a class="saat dolu" href="#/basvuru/${x.basvuruId}">${saat(x.bas)}</a>`).join('')}</div></div>`).join('') || '<p class="soluk">Henüz saat eklemedin.</p>'}
+    ${mevcut.length ? '<p class="soluk kucukYazi">Boş bir saati silmek için üstündeki ✕ işaretine dokun. Yeşil saatler dolu; dokununca başvuruyu açar.</p>' : ''}</div>`;
+}
+function slotEkle(ilanId) {
+  let n = 0;
+  sfSlotlar().forEach(bas => {
+    if (S.slotlar.some(x => x.ilanId === ilanId && x.bas === bas)) return;
+    S.slotlar.push({ id: uid(), ilanId, bas, sure: SF.sure, durum: 'bos', basvuruId: null, hat24: false }); n++;
+  });
+  SF.saatler = []; SF.gunler = []; SF.haric = [];
+  kaydet(); toast(n ? `${n} görüşme saati eklendi` : 'Bu saatler zaten ekliydi'); render();
+}
+function slotSil(id) { S.slotlar = S.slotlar.filter(x => !(x.id === id && x.durum === 'bos')); kaydet(); toast('Saat silindi'); render(); }
+
+function ozellik(ad, v) { return `<div><small>${ad}</small><b>${v}</b></div>`; }
+function ekranIlan(id) {
+  const i = S.ilanlar.find(x => x.id === id); if (!i) return bulunamadi();
+  const ev = S.rol === 'evsahibi';
+  let h = geri('#/ilanlar', ev ? 'İlanlarım' : 'İlanlar');
+  if (i.fotolar && i.fotolar.length) h += `<div class="galeri">${i.fotolar.map(f => `<img data-dosya="${f}" alt="Ev fotoğrafı" onclick="belgeAc('${f}')">`).join('')}</div>`;
+  h += `<h2 class="baslik">${esc(i.baslik)}</h2><div class="soluk">${esc(i.adres)}</div><div class="fiyat buyuk">${para(i.kira)} <small>/ ay</small></div>`;
+  h += ipucu(ev ? 'Görüşme saatlerini ekle ve gelen başvuruları buradan takip et.' : 'Evin bilgilerine bak. Uygunsa en alttaki düğmeyle başvur.');
+  h += `<div class="kart"><div class="ozellik">${ozellik('Depozito (güvence)', i.depozito ? para(i.depozito) : '—')}${ozellik('Oda', esc(i.oda) || '—')}${ozellik('Alan', i.m2 ? esc(i.m2) + ' m²' : '—')}${ozellik('Kat', esc(i.kat) || '—')}</div>
+    ${i.aciklama ? `<p class="aciklama">${esc(i.aciklama)}</p>` : ''}</div>
+    <div class="kart"><b>Kiracıdan istenen belgeler</b><ul class="liste">${(i.belgeler || []).map(k => `<li>${BELGE_TURLERI[k]}</li>`).join('') || '<li>Belge istenmiyor</li>'}</ul></div>
+    ${ev ? anahtarKart(i, false) : `<div class="kart"><b>Eve giriş / anahtar</b><p style="margin:6px 0 0">${ANAHTAR[i.anahtar && i.anahtar.yontem] || '—'}</p><p class="soluk kucukYazi">Ayrıntılı tarif${(i.anahtar && i.anahtar.fotolar || []).length ? ` ve ${i.anahtar.fotolar.length} fotoğraflı adım` : ''}, görüşme saati aldıktan sonra görünür.</p></div>`}`;
+  if (ev) {
+    const bv = S.basvurular.filter(b => b.ilanId === i.id).sort((a, b) => b.olusturma.localeCompare(a.olusturma));
+    h += slotEditor(i);
+    h += `<div class="kart"><b class="kartBaslik">Başvurular (${bv.length})</b>${bv.map(basvuruSatiri).join('') || '<p class="soluk">Henüz başvuru yok.</p>'}</div>`;
+    h += `<div class="btnlar"><a class="btn ikincil" href="#/ilan-form/${i.id}">İlanı düzenle</a><button class="btn ikincil" onclick="ilanDurum('${i.id}')">${i.durum === 'yayinda' ? 'İlanı gizle' : 'İlanı yeniden yayınla'}</button></div>`;
+    h += tehlikeBolum(`<button class="btn tehlike" onclick="ilanSil('${i.id}')">İlanı tamamen sil</button>`);
+  } else {
+    const benim = S.basvurular.find(b => b.ilanId === i.id && aktifMi(b));
+    h += benim ? `<a class="btn tam buyukBtn" href="#/basvuru/${benim.id}">Başvurumu gör</a>` : `<a class="btn tam buyukBtn" href="#/basvur/${i.id}">Bu eve başvur</a>`;
+  }
+  return h;
+}
+function ilanDurum(id) { const i = S.ilanlar.find(x => x.id === id); i.durum = i.durum === 'yayinda' ? 'kapali' : 'yayinda'; kaydet(); toast(i.durum === 'yayinda' ? 'İlan yayında' : 'İlan gizlendi'); render(); }
+async function ilanSil(id) {
+  if (!(await onayla('İlan; fotoğrafları, görüşme saatleri, başvuruları ve başvuru belgeleriyle birlikte silinsin mi?', 'Evet, ilanı sil'))) return;
+  const i = S.ilanlar.find(x => x.id === id);
+  for (const f of (i.fotolar || [])) await dosyaSil(f);
+  for (const f of ((i.anahtar && i.anahtar.fotolar) || [])) await dosyaSil(f.id);
+  for (const b of S.basvurular.filter(x => x.ilanId === id)) for (const d of Object.values(b.belgeler || {})) await dosyaSil(d.id);
+  S.ilanlar = S.ilanlar.filter(x => x.id !== id);
+  S.slotlar = S.slotlar.filter(x => x.ilanId !== id);
+  S.basvurular = S.basvurular.filter(x => x.ilanId !== id);
+  kaydet(); toast('İlan silindi'); git('#/ilanlar');
+}
+
+
+/* Eve giriş: Airbnb gibi adım adım fotoğraflı tarif */
+function tarifAdimlari(i) {
+  const f = (i.anahtar && i.anahtar.fotolar) || [];
+  if (!f.length) return '';
+  return `<div class="tarifAdimlar">${f.map((x, n) => `<div class="tarifAdim"><button type="button" class="tarifFoto" onclick="belgeAc('${x.id}')" aria-label="Adım ${n + 1} fotoğrafını büyüt"><img data-dosya="${x.id}" alt="Adım ${n + 1}"></button><div class="tarifMetin"><span class="adimNo">${n + 1}</span><p>${x.not ? esc(x.not) : '<span class="soluk">Açıklama yok</span>'}</p></div></div>`).join('')}</div>`;
+}
+function anahtarKart(i, adresli = true) {
+  return `<div class="kart bilgiNot"><div class="uyariUst">Eve giriş / anahtar</div><p style="margin:0"><b>${ANAHTAR[i.anahtar && i.anahtar.yontem] || '—'}</b></p>${i.anahtar && i.anahtar.aciklama ? `<p class="aciklama" style="margin-top:6px">${esc(i.anahtar.aciklama)}</p>` : ''}${tarifAdimlari(i)}${adresli ? `<p class="soluk kucukYazi">Adres: ${esc(i.adres)}</p>` : ''}</div>`;
+}
+
+/* ---------- İlan formu ---------- */
+let TASLAK_FOTO = [], TASLAK_TARIF = [];
+function ekranIlanForm(id) {
+  const i = id ? S.ilanlar.find(x => x.id === id) : null;
+  if (id && !i) return bulunamadi();
+  TASLAK_FOTO = [...((i && i.fotolar) || [])];
+  TASLAK_TARIF = ((i && i.anahtar && i.anahtar.fotolar) || []).map(x => ({ id: x.id, not: x.not || '' }));
+  const bl = i ? i.belgeler || [] : ['kimlik', 'findeks', 'adli'];
+  const an = (i && i.anahtar) || { yontem: 'kapida', aciklama: '' };
+  return {
+    html: `${geri(i ? '#/ilan/' + i.id : '#/ilanlar', 'Geri')}<h2 class="baslik">${i ? 'İlanı düzenle' : 'Yeni ilan'}</h2>
+    ${ipucu('Evin bilgilerini, fotoğraflarını ve kiracıdan istediğin belgeleri gir. Kaydettikten sonra görüşme saatlerini eklersin.')}
+    <form onsubmit="ilanKaydet(event,'${i ? i.id : ''}')" novalidate>
+      <div class="kart"><b class="kartBaslik">Ev bilgileri</b>
+        <label class="alan" for="ilBaslik">Başlık<input id="ilBaslik" name="baslik" maxlength="70" placeholder="ör. Kadıköy 2+1, metroya 5 dk" value="${esc(i && i.baslik)}"></label>
+        <label class="alan" for="ilAdres">Adres / semt<input id="ilAdres" name="adres" maxlength="140" placeholder="ör. Caferağa Mah., Kadıköy" value="${esc(i && i.adres)}"></label>
+        <div class="ikili dar"><label class="alan" for="ilKira">Aylık kira (₺)<input id="ilKira" name="kira" inputmode="decimal" class="tutar" value="${i ? sayiInput(i.kira) : ''}"></label>
+        <label class="alan" for="ilDep">Depozito (₺)<input id="ilDep" name="depozito" inputmode="decimal" class="tutar" value="${i ? sayiInput(i.depozito) : ''}"></label></div>
+        <div class="alan"><label for="odaInput">Oda sayısı</label><div class="combo"><input id="odaInput" name="oda" maxlength="20" autocomplete="off" placeholder="Listeden seç veya yaz" value="${esc(i && i.oda)}" oninput="odaListe()" onfocus="odaListe()" onkeydown="if(event.key==='Escape')odaKapat()" role="combobox" aria-controls="odaListe" aria-autocomplete="list"><button type="button" class="comboBtn" onclick="odaListe(true)" aria-label="Oda seçeneklerini göster">▾</button><div class="comboListe" id="odaListe" role="listbox" hidden></div></div></div>
+        <div class="ikili dar"><label class="alan" for="ilM2">Alan (m²)<input id="ilM2" name="m2" inputmode="numeric" maxlength="5" value="${esc(i && i.m2)}"></label>
+        <label class="alan" for="ilKat">Kat<input id="ilKat" name="kat" maxlength="20" placeholder="ör. 3 / 5" value="${esc(i && i.kat)}"></label></div>
+        <label class="alan" for="ilAcik">Açıklama<textarea id="ilAcik" name="aciklama" maxlength="2000" placeholder="Aidat, ısınma, eşya durumu, evcil hayvan vb.">${esc(i && i.aciklama)}</textarea></label>
+      </div>
+      <div class="kart"><b class="kartBaslik">Fotoğraflar</b><p class="soluk kucukYazi" style="margin:4px 0 0">En fazla 15 fotoğraf. Telefonda yer kaplamaması için küçültülür.</p>
+        <div class="btnlar"><label class="btn ikincil dosyaBtn">${ik(IK.kamera, 22)}Fotoğraf çek<input type="file" accept="image/*" capture="environment" hidden onchange="fotoEkle(this)"></label>
+        <label class="btn ikincil dosyaBtn">${ik(IK.klasor, 22)}Galeriden seç<input type="file" accept="image/*" multiple hidden onchange="fotoEkle(this)"></label></div>
+        <div class="kucukler" id="fotolar"></div></div>
+      <div class="kart"><b class="kartBaslik">Kiracıdan istediğin belgeler</b>
+        ${Object.entries(BELGE_TURLERI).map(([k, ad]) => `<label class="secenek"><input type="checkbox" name="belge" value="${k}" ${bl.includes(k) ? 'checked' : ''}>${ad}</label>`).join('')}</div>
+      <div class="kart"><b class="kartBaslik">Eve giriş / anahtar</b>
+        <label class="alan" for="ilAnYon">Nasıl girilecek?<select id="ilAnYon" name="anahtarYontem">${Object.entries(ANAHTAR).map(([k, ad]) => `<option value="${k}" ${an.yontem === k ? 'selected' : ''}>${ad}</option>`).join('')}</select></label>
+        <label class="alan" for="ilAnAc">Tarif <span class="soluk" style="font-weight:400">(yalnızca görüşme saati alan kiracı görür)</span><textarea id="ilAnAc" name="anahtarAciklama" maxlength="600" placeholder="ör. Kapıcı Ahmet Bey'e adınızı söyleyin; zemin kat 1 numara.">${esc(an.aciklama)}</textarea></label>
+        <div class="alan"><span class="etiket">Fotoğraflı tarif <span class="soluk" style="font-weight:400">(isteğe bağlı)</span></span>
+          <p class="soluk kucukYazi" style="margin:4px 0 0;font-weight:400">Airbnb'deki gibi adım adım: bina girişi, kapı, anahtar kutusunun yeri… Her fotoğrafın altına kısa bir açıklama yaz. Sırayı ↑ ↓ ile değiştirebilirsin.</p>
+          <div id="tarifListe"></div>
+          <div class="btnlar"><label class="btn ikincil dosyaBtn">${ik(IK.kamera, 22)}Fotoğraf çek<input type="file" accept="image/*" capture="environment" hidden onchange="tarifEkle(this)"></label>
+          <label class="btn ikincil dosyaBtn">${ik(IK.klasor, 22)}Galeriden seç<input type="file" accept="image/*" multiple hidden onchange="tarifEkle(this)"></label></div></div>
+        <p class="soluk kucukYazi">Anahtar kutusu şifresini görüşme günü ayrıca iletmek daha güvenli olabilir.</p></div>
+      <button class="btn tam buyukBtn">${i ? 'Kaydet' : 'İlanı yayınla'}</button>
+    </form>`,
+    after: () => { fotoCiz(); tarifCiz(); }
+  };
+}
+function fotoCiz() {
+  const el = $('#fotolar'); if (!el) return;
+  el.innerHTML = TASLAK_FOTO.map((f, n) => `<div><img data-dosya="${f}" alt="Fotoğraf ${n + 1}"><button type="button" onclick="fotoCikar(${n})" aria-label="Fotoğraf ${n + 1}'i kaldır">Kaldır</button></div>`).join('');
+  dosyalariBagla(el);
+}
+async function fotoEkle(input) {
+  const files = [...input.files]; input.value = '';
+  for (const f of files) {
+    if (TASLAK_FOTO.length >= 15) { toast('En fazla 15 fotoğraf eklenebilir.'); break; }
+    try { const d = await dosyaKaydet(f, 1600); TASLAK_FOTO.push(d.id); fotoCiz(); }
+    catch (e) { toast(e.message); }
+  }
+}
+function fotoCikar(n) { TASLAK_FOTO.splice(n, 1); fotoCiz(); }
+function tarifCiz() {
+  const el = $('#tarifListe'); if (!el) return;
+  el.innerHTML = TASLAK_TARIF.map((x, n) => `<div class="tarifDuzen"><div class="tarifDuzenUst"><span class="adimNo">${n + 1}</span><img data-dosya="${x.id}" alt="Adım ${n + 1}">
+      <div class="tarifDugmeler"><button type="button" onclick="tarifTasi(${n},-1)" ${n === 0 ? 'disabled' : ''} aria-label="Adım ${n + 1}'i yukarı al">↑</button><button type="button" onclick="tarifTasi(${n},1)" ${n === TASLAK_TARIF.length - 1 ? 'disabled' : ''} aria-label="Adım ${n + 1}'i aşağı al">↓</button><button type="button" class="kirmiziYazi" onclick="tarifCikar(${n})">Kaldır</button></div></div>
+    <label class="alan" style="margin:8px 0 0" for="tarifNot${n}">Adım ${n + 1} açıklaması<textarea id="tarifNot${n}" maxlength="300" style="min-height:80px" placeholder="ör. Kapının sağındaki gri kutu; şifre görüşme günü iletilecek." oninput="TASLAK_TARIF[${n}].not=this.value">${esc(x.not)}</textarea></label></div>`).join('');
+  dosyalariBagla(el);
+}
+async function tarifEkle(input) {
+  const files = [...input.files]; input.value = '';
+  for (const f of files) {
+    if (TASLAK_TARIF.length >= 10) { toast('En fazla 10 adım eklenebilir.'); break; }
+    try { const d = await dosyaKaydet(f, 1600); TASLAK_TARIF.push({ id: d.id, not: '' }); tarifCiz(); }
+    catch (e) { toast(e.message); }
+  }
+}
+function tarifTasi(n, d) { const m = n + d; if (m < 0 || m >= TASLAK_TARIF.length) return; [TASLAK_TARIF[n], TASLAK_TARIF[m]] = [TASLAK_TARIF[m], TASLAK_TARIF[n]]; tarifCiz(); }
+function tarifCikar(n) { TASLAK_TARIF.splice(n, 1); tarifCiz(); }
+function odaKapat() { const l = $('#odaListe'); if (l) l.hidden = true; }
+function odaListe(hepsi) {
+  const l = $('#odaListe'), inp = $('#odaInput'); if (!l || !inp) return;
+  if (hepsi === true && !l.hidden) return odaKapat();
+  const q = inp.value.trim().toLocaleLowerCase('tr-TR');
+  const tam = ODA_SECENEKLERI.some(o => o.toLocaleLowerCase('tr-TR') === q);
+  const liste = hepsi === true || !q || tam ? ODA_SECENEKLERI : ODA_SECENEKLERI.filter(o => o.toLocaleLowerCase('tr-TR').includes(q));
+  if (!liste.length) return odaKapat();
+  l.innerHTML = liste.map(o => `<button type="button" role="option" onclick="odaSec('${o}')">${esc(o)}</button>`).join('');
+  l.hidden = false;
+}
+function odaSec(o) { $('#odaInput').value = o; odaKapat(); }
+async function ilanKaydet(e, id) {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const kira = sayiAl(f.get('kira'));
+  const v = {
+    baslik: f.get('baslik').trim(), adres: f.get('adres').trim(), kira, depozito: sayiAl(f.get('depozito')),
+    oda: f.get('oda').trim(), m2: f.get('m2').trim(), kat: f.get('kat').trim(), aciklama: f.get('aciklama').trim(),
+    fotolar: [...TASLAK_FOTO], belgeler: f.getAll('belge'),
+    anahtar: { yontem: f.get('anahtarYontem'), aciklama: f.get('anahtarAciklama').trim(), fotolar: TASLAK_TARIF.map(x => ({ id: x.id, not: (x.not || '').trim() })) }
+  };
+  if (!v.baslik) return toast('İlana bir başlık yaz.');
+  if (!v.adres) return toast('Adres veya semt yaz.');
+  if (!kira) return toast('Aylık kira tutarını yaz.');
+  let ilanId = id;
+  if (id) {
+    const i = S.ilanlar.find(x => x.id === id);
+    for (const eski of (i.fotolar || [])) if (!v.fotolar.includes(eski)) await dosyaSil(eski);
+    const yeniTarif = v.anahtar.fotolar.map(x => x.id);
+    for (const eski of ((i.anahtar && i.anahtar.fotolar) || [])) if (!yeniTarif.includes(eski.id)) await dosyaSil(eski.id);
+    Object.assign(i, v);
+  } else {
+    ilanId = uid();
+    S.ilanlar.push(Object.assign({ id: ilanId, durum: 'yayinda', olusturma: new Date().toISOString() }, v));
+  }
+  kaydet(); toast(id ? 'İlan kaydedildi' : 'İlan yayında. Şimdi görüşme saatlerini ekle.'); git('#/ilan/' + ilanId);
+}
+
+/* ---------- Kiracı: görüşme saati seçici (gömülü takvim) ---------- */
+let KS = {};
+function ksHazirla(anahtar, ilanId) {
+  if (KS.anahtar === anahtar) return;
+  const ilk = gelecekSlotlar(ilanId).find(x => x.durum === 'bos');
+  const d = ilk ? tarihAl(ilk.bas.slice(0, 10)) : bugun();
+  KS = { anahtar, ilanId, ay: new Date(d.getFullYear(), d.getMonth(), 1), gun: ilk ? ilk.bas.slice(0, 10) : null, slot: null };
+}
+function ksGun(iso) { KS.gun = iso; KS.slot = null; render(); }
+function ksAy(d) { KS.ay = new Date(KS.ay.getFullYear(), KS.ay.getMonth() + d, 1); render(); }
+function ksSlot(id) { KS.slot = KS.slot === id ? null : id; render(); }
+function kiraciSaatSecici() {
+  const bos = gelecekSlotlar(KS.ilanId).filter(x => x.durum === 'bos');
+  if (!bos.length) { KS.slot = null; return '<p class="durum sari">Ev sahibi henüz görüşme saati eklemedi. Başvurunu yine de gönderebilirsin; saat eklenince başvurunun sayfasından seçersin.</p>'; }
+  const g = gunlereAyir(bos), gunler = new Set(Object.keys(g));
+  if (KS.slot && !bos.some(x => x.id === KS.slot)) KS.slot = null;
+  if (KS.gun && !g[KS.gun]) KS.gun = null;
+  const sec = KS.slot && S.slotlar.find(x => x.id === KS.slot);
+  return `<p class="soluk" style="margin:4px 0 10px">Yeşil noktalı günlerde boş saat var. Önce günü, sonra saati seç.</p>
+    ${takvimCiz({ ay: KS.ay, secili: KS.gun ? [KS.gun] : [], isaretli: gunler, secilebilir: gunler, tikla: 'ksGun', gezin: 'ksAy' })}
+    ${KS.gun ? `<div class="adim"><b>${gunBaslik(KS.gun)}</b></div><div class="saatIzgara">${g[KS.gun].map(x => `<button type="button" class="saatBuyuk ${KS.slot === x.id ? 'secili' : ''}" aria-pressed="${KS.slot === x.id}" onclick="ksSlot('${x.id}')">${saat(x.bas)}</button>`).join('')}</div>` : '<p class="soluk">Takvimden bir gün seç.</p>'}
+    ${sec ? `<div class="ozetKutu">Seçtiğin görüşme:<br><b>${tarihSaat(sec.bas)}</b> (${sec.sure} dakika)</div>` : ''}`;
+}
+
+/* ---------- Kiracı: adım adım başvuru ---------- */
+let BF = {};
+const BF_ADIMLAR = ['Bilgilerin', 'Belgeler', 'Görüşme saati', 'Kontrol et ve gönder'];
+function bfHazirla(ilanId) {
+  if (BF.ilanId === ilanId) return;
+  const p = S.profil || {};
+  BF = { ilanId, adim: 1, ad: p.ad || '', telefon: p.telefon || '', mesaj: '', belgeler: {}, kvkk: false, yukleniyor: null };
+}
+const aktifMi = b => !['reddedildi', 'geriCekildi'].includes(b.durum);
+function belgeOnizleme(d) {
+  return `<div class="belgeOnizleme">${d.tur && d.tur.startsWith('image/') ? `<img data-dosya="${d.id}" alt="">` : '<span class="pdf">PDF</span>'}<span>${esc(d.ad)} · ${boyutYaz(d.boyut)}</span></div>`;
+}
+function ekranBasvur(id) {
+  const i = S.ilanlar.find(x => x.id === id); if (!i) return bulunamadi();
+  if (i.durum !== 'yayinda') return `${geri('#/ilanlar', 'İlanlar')}<div class="kart bos">Bu ilan şu an başvuruya kapalı.</div>`;
+  bfHazirla(i.id); ksHazirla('bf-' + i.id, i.id);
+  const n = BF.adim;
+  let h = `${geri('#/ilan/' + i.id, 'İlana dön')}
+    <div class="adimBar"><div class="adimBilgi">Adım ${n} / 4</div>
+    <div class="adimNokta" aria-hidden="true">${[1, 2, 3, 4].map(k => `<i class="${k <= n ? 'tamam' : ''}"></i>`).join('')}</div>
+    <h2 class="baslik" style="margin-top:6px">${BF_ADIMLAR[n - 1]}</h2><div class="soluk">${esc(i.baslik)}</div></div>`;
+
+  if (n === 1) {
+    h += ipucu('Ev sahibi seninle bu bilgilerle iletişime geçecek.');
+    h += `<div class="kart">
+      <label class="alan" for="bfAd">Adın ve soyadın<input id="bfAd" maxlength="60" autocomplete="name" value="${esc(BF.ad)}" oninput="BF.ad=this.value"></label>
+      <label class="alan" for="bfTel">Telefon numaran<input id="bfTel" type="tel" inputmode="tel" autocomplete="tel" placeholder="05xx xxx xx xx" value="${esc(BF.telefon)}" oninput="BF.telefon=this.value"></label>
+      <label class="alan" for="bfMsj">Ev sahibine not <span class="soluk" style="font-weight:400">(isteğe bağlı)</span><textarea id="bfMsj" maxlength="600" placeholder="ör. 2 kişiyiz, evcil hayvanımız yok." oninput="BF.mesaj=this.value">${esc(BF.mesaj)}</textarea></label></div>`;
+  } else if (n === 2) {
+    const ist = i.belgeler || [];
+    h += ipucu('Her belge için "Fotoğraf çek" ya da telefonundaki dosyayı seçmek için "Dosya seç"e dokun. Yüklenince yanında ✓ görürsün.');
+    if (!ist.length) h += '<div class="kart bos">Bu ilan için belge istenmiyor. "İleri"ye dokun.</div>';
+    ist.forEach(k => {
+      const d = BF.belgeler[k], yuk = BF.yukleniyor === k;
+      h += `<div class="belgeKutu ${d ? 'tamam' : ''}">
+        <div class="belgeKutuUst"><b>${BELGE_TURLERI[k]}</b>${yuk ? '<span class="cip sari">Yükleniyor…</span>' : d ? `<span class="cip">${ik(IK.tik, 16)} Yüklendi</span>` : '<span class="cip gri">Eksik</span>'}</div>
+        <p class="soluk kucukYazi" style="margin:6px 0 0">${BELGE_IPUCU[k]}</p>
+        ${d ? belgeOnizleme(d) : ''}
+        <div class="btnlar">
+          <label class="btn ${d ? 'ikincil' : ''} dosyaBtn">${ik(IK.kamera, 22)}${d ? 'Yeniden çek' : 'Fotoğraf çek'}<input type="file" accept="image/*" capture="environment" hidden onchange="bfBelge('${k}',this)"></label>
+          <label class="btn ikincil dosyaBtn">${ik(IK.klasor, 22)}${d ? 'Başka dosya seç' : 'Dosya seç'}<input type="file" accept="image/*,application/pdf" hidden onchange="bfBelge('${k}',this)"></label>
+          ${d ? `<button type="button" class="btn ikincil" onclick="belgeAc('${d.id}')">Aç</button>` : ''}
+        </div></div>`;
+    });
+    if (ist.length) h += '<p class="soluk kucukYazi">Dosya seçme penceresi açılmıyorsa sayfayı Chrome gibi bir tarayıcıda açmayı dene.</p>';
+  } else if (n === 3) {
+    h += ipucu('Evi görmek için sana uyan günü ve saati seç.');
+    h += `<div class="kart">${kiraciSaatSecici()}</div>`;
+    if (!KS.slot) h += '<p class="soluk kucukYazi">Şimdi seçmek istemezsen "İleri"ye dokun; saati daha sonra başvurunun sayfasından seçebilirsin.</p>';
+  } else {
+    const sec = KS.slot && S.slotlar.find(x => x.id === KS.slot && x.durum === 'bos');
+    const ist = i.belgeler || [];
+    h += ipucu('Bilgilerini son bir kez kontrol et. Yanlış bir şey varsa "Değiştir"e dokun.');
+    h += `<div class="kart">
+      <div class="ozetSatir"><div><small>Ad soyad · telefon</small><b>${esc(BF.ad)}</b><br>${esc(BF.telefon)}${BF.mesaj ? `<br><span class="soluk">“${esc(BF.mesaj)}”</span>` : ''}</div><button class="btn kucuk ikincil" onclick="bfAdim(1)">Değiştir</button></div>
+      <div class="ozetSatir"><div><small>Belgeler</small>${ist.length ? ist.map(k => `${BF.belgeler[k] ? '✓' : '✗'} ${BELGE_TURLERI[k]}`).join('<br>') : 'Belge istenmiyor'}</div><button class="btn kucuk ikincil" onclick="bfAdim(2)">Değiştir</button></div>
+      <div class="ozetSatir"><div><small>Görüşme</small>${sec ? `<b>${tarihSaat(sec.bas)}</b>` : 'Saat seçilmedi; sonra seçebilirsin.'}</div><button class="btn kucuk ikincil" onclick="bfAdim(3)">Değiştir</button></div>
+    </div>
+    <label class="onayKutusu"><input type="checkbox" ${BF.kvkk ? 'checked' : ''} onchange="BF.kvkk=this.checked"><span>Yüklediğim belgelerin ve iletişim bilgilerimin yalnızca bu kiralama değerlendirmesi için ev sahibiyle paylaşılmasını kabul ediyorum.</span></label>`;
+  }
+
+  h += `<div class="adimNav">${n > 1 ? '<button type="button" class="btn ikincil" onclick="bfGit(-1)">‹ Geri</button>' : ''}
+    <button type="button" class="btn buyukBtn" id="bfIleri" onclick="bfGit(1)" ${BF.yukleniyor ? 'disabled' : ''}>${n < 4 ? 'İleri ›' : 'Başvuruyu gönder'}</button></div>`;
+  return h;
+}
+function bfAdim(n) { BF.adim = n; render(); window.scrollTo(0, 0); }
+function bfGit(d) {
+  const i = S.ilanlar.find(x => x.id === BF.ilanId); if (!i) return;
+  if (d > 0) {
+    if (BF.adim === 1) {
+      if (!BF.ad.trim()) return toast('Adını ve soyadını yaz.');
+      if (String(BF.telefon).replace(/\D/g, '').length < 10) return toast('Telefon numaranı eksiksiz yaz.');
+    }
+    if (BF.adim === 2) {
+      const eksik = (i.belgeler || []).filter(k => !BF.belgeler[k]);
+      if (eksik.length) return toast(`Eksik belge: ${eksik.map(k => BELGE_TURLERI[k]).join(', ')}`);
+    }
+    if (BF.adim === 4) return basvuruGonder();
+  }
+  bfAdim(Math.min(4, Math.max(1, BF.adim + d)));
+}
+async function bfBelge(k, input) {
+  const f = input.files[0]; input.value = '';
+  if (!f) return;
+  BF.yukleniyor = k; render();
+  try {
+    const d = await dosyaKaydet(f);
+    if (BF.belgeler[k]) await dosyaSil(BF.belgeler[k].id);
+    BF.belgeler[k] = d; toast(`${BELGE_TURLERI[k]} yüklendi`);
+  } catch (e) { toast(e.message); }
+  BF.yukleniyor = null; render();
+}
+function basvuruGonder() {
+  const i = S.ilanlar.find(x => x.id === BF.ilanId);
+  if (!BF.kvkk) return toast('Göndermek için en alttaki onay kutusunu işaretle.');
+  const slot = KS.slot ? S.slotlar.find(x => x.id === KS.slot && x.durum === 'bos') : null;
+  const b = { id: uid(), ilanId: i.id, ad: BF.ad.trim(), telefon: BF.telefon.trim(), mesaj: BF.mesaj.trim(), belgeler: BF.belgeler, slotId: slot ? slot.id : null, durum: 'beklemede', evSahibiNotu: '', olusturma: new Date().toISOString() };
+  if (slot) { slot.durum = 'dolu'; slot.basvuruId = b.id; }
+  S.basvurular.push(b);
+  S.profil = { ad: b.ad, telefon: b.telefon };
+  kaydet();
+  bildir('evsahibi', `Yeni başvuru: ${b.ad}, ${i.baslik}.${slot ? ' Görüşme: ' + tarihSaat(slot.bas) : ''}`, '#/basvuru/' + b.id);
+  BF = {}; KS = {};
+  git('#/gonderildi/' + b.id);
+}
+function ekranGonderildi(id) {
+  const b = S.basvurular.find(x => x.id === id); if (!b) return bulunamadi();
+  const i = S.ilanlar.find(x => x.id === b.ilanId), slot = b.slotId && S.slotlar.find(x => x.id === b.slotId);
+  return `<section class="basari"><div class="tik">${ik(IK.tik, 56)}</div><h2 class="baslik">Başvurun gönderildi</h2><p class="soluk" style="margin:0">${esc(i ? i.baslik : '')} için başvurun ev sahibine iletildi.</p></section>
+    <div class="kart"><b class="kartBaslik">Görüşme</b>${slot ? `<p style="font-size:20px;margin:6px 0 0"><b>${tarihSaat(slot.bas)}</b></p><p class="soluk" style="margin:4px 0 0">${slot.sure} dakika · ${esc(i ? i.adres : '')}</p>` : '<p style="margin:6px 0 0">Henüz saat seçmedin. Başvurunun sayfasından seçebilirsin.</p>'}</div>
+    ${slot && i ? anahtarKart(i) : ''}
+    <div class="kart"><b class="kartBaslik">Sırada ne var?</b><ol class="siradaki">
+      <li>Ev sahibi belgelerini inceleyecek.</li>
+      <li>Kararı "Bildirimler" bölümünde göreceksin.</li>
+      ${slot ? '<li>Görüşmeden bir gün önce sana hatırlatma gelecek.</li>' : '<li>Görüşme saatini başvurunun sayfasından seçebilirsin.</li>'}
+    </ol></div>
+    <a class="btn tam buyukBtn" href="#/basvuru/${b.id}">Başvurumu gör</a>
+    <a class="btn ikincil tam" href="#/">Ana sayfaya dön</a>`;
+}
+function randevuAl(bid) {
+  const b = S.basvurular.find(x => x.id === bid);
+  const slot = KS.slot && S.slotlar.find(x => x.id === KS.slot && x.durum === 'bos');
+  if (!slot) return toast('Önce takvimden gün, sonra saat seç.');
+  slot.durum = 'dolu'; slot.basvuruId = b.id; b.slotId = slot.id; kaydet();
+  const i = S.ilanlar.find(x => x.id === b.ilanId);
+  bildir('evsahibi', `Görüşme saati seçildi: ${b.ad}, ${i ? i.baslik : ''}. ${tarihSaat(slot.bas)}`, '#/basvuru/' + b.id);
+  KS = {}; toast('Görüşme saatin kaydedildi'); render();
+}
+async function randevuIptal(bid) {
+  if (!(await onayla('Görüşme iptal edilsin mi? Saat başkasının seçebilmesi için boşa çıkar.', 'Evet, iptal et'))) return;
+  const b = S.basvurular.find(x => x.id === bid), slot = S.slotlar.find(x => x.id === b.slotId);
+  const i = S.ilanlar.find(x => x.id === b.ilanId);
+  if (slot) { slot.durum = 'bos'; slot.basvuruId = null; slot.hat24 = false; }
+  b.slotId = null; kaydet();
+  const ev = S.rol === 'evsahibi';
+  bildir(ev ? 'kiraci' : 'evsahibi', `${ev ? 'Ev sahibi' : b.ad} görüşmeyi iptal etti: ${i ? i.baslik : ''}${slot ? '. ' + tarihSaat(slot.bas) : ''}`, '#/basvuru/' + b.id);
+  toast('Görüşme iptal edildi'); render();
+}
+async function basvuruGeriCek(bid) {
+  if (!(await onayla('Başvurunu geri çekmek istiyor musun?', 'Evet, geri çek'))) return;
+  const b = S.basvurular.find(x => x.id === bid), i = S.ilanlar.find(x => x.id === b.ilanId);
+  const slot = S.slotlar.find(x => x.id === b.slotId);
+  if (slot) { slot.durum = 'bos'; slot.basvuruId = null; slot.hat24 = false; }
+  b.slotId = null; b.durum = 'geriCekildi'; kaydet();
+  bildir('evsahibi', `${b.ad} başvurusunu geri çekti: ${i ? i.baslik : ''}`, '#/basvuru/' + b.id);
+  toast('Başvuru geri çekildi'); render();
+}
+function basvuruDurum(bid, d) {
+  const b = S.basvurular.find(x => x.id === bid), i = S.ilanlar.find(x => x.id === b.ilanId);
+  if (b.durum === d) return;
+  b.durum = d; kaydet();
+  bildir('kiraci', `${i ? i.baslik : 'İlan'} başvurunun durumu: ${DURUMLAR[d][0]}`, '#/basvuru/' + b.id);
+  toast('Karar kaydedildi, kiracıya bildirim gitti'); render();
+}
+function basvuruNot(bid, v) { S.basvurular.find(x => x.id === bid).evSahibiNotu = v; kaydet(); toast('Not kaydedildi'); }
+async function belgeleriSil(bid) {
+  if (!(await onayla('Bu başvurunun belgeleri bu cihazdan kalıcı olarak silinsin mi?', 'Evet, belgeleri sil'))) return;
+  const b = S.basvurular.find(x => x.id === bid);
+  for (const d of Object.values(b.belgeler || {})) await dosyaSil(d.id);
+  b.belgeler = {}; kaydet(); toast('Belgeler silindi'); render();
+}
+function durumCip(d) { const [ad, r] = DURUMLAR[d] || [d, 'gri']; return `<span class="cip ${r}">${ad}</span>`; }
+function basvuruSatiri(b) {
+  const i = S.ilanlar.find(x => x.id === b.ilanId), sl = b.slotId && S.slotlar.find(x => x.id === b.slotId);
+  const ev = S.rol === 'evsahibi';
+  return `<a class="kart" href="#/basvuru/${b.id}" style="margin:10px 0"><div class="kartUst"><div style="min-width:0"><b style="font-size:18px">${esc(ev ? b.ad : (i ? i.baslik : 'Silinmiş ilan'))}</b>
+    <div class="soluk kucukYazi">${ev ? esc(i ? i.baslik : '') + '<br>' : ''}${sl ? 'Görüşme: ' + tarihSaat(sl.bas) : 'Görüşme saati yok'}</div></div>${durumCip(b.durum)}</div></a>`;
+}
+function ekranBasvurular() {
+  const ev = S.rol === 'evsahibi';
+  const list = [...S.basvurular].sort((a, b) => b.olusturma.localeCompare(a.olusturma));
+  return `<h2 class="baslik">${ev ? 'Gelen başvurular' : 'Başvurularım'}</h2>
+    ${ipucu(ev ? 'Bir başvuruya dokun; belgelere bak ve kararını ver.' : 'Yaptığın başvurular ve durumları. Ayrıntı için dokun.')}
+    ${list.map(basvuruSatiri).join('') || `<div class="kart bos">${ev ? 'Henüz başvuru yok.' : 'Henüz başvuru yapmadın.'}</div>${ev ? '' : '<a class="btn tam buyukBtn" href="#/ilanlar">İlanlara göz at</a>'}`}`;
+}
+function ekranBasvuru(id) {
+  const b = S.basvurular.find(x => x.id === id); if (!b) return bulunamadi();
+  const i = S.ilanlar.find(x => x.id === b.ilanId);
+  const slot = b.slotId ? S.slotlar.find(x => x.id === b.slotId) : null;
+  const ev = S.rol === 'evsahibi';
+  let h = `${geri('#/basvurular', 'Başvurular')}
+    <h2 class="baslik">${esc(ev ? b.ad : (i ? i.baslik : 'Silinmiş ilan'))}</h2>
+    <div class="soluk">${ev ? esc(i ? i.baslik : '') + ' · ' : ''}Başvuru: ${tarihYaz(b.olusturma)}</div><div class="cipler">${durumCip(b.durum)}</div>`;
+  h += ipucu(ev ? 'Belgelere dokunarak aç. Kararını aşağıdaki düğmelerle ver; kiracıya bildirim gider.' : 'Başvurunun durumu ve görüşme bilgilerin burada.');
+
+  if (slot) {
+    h += `<div class="kart"><b class="kartBaslik">Görüşme</b><p style="font-size:20px;font-weight:700;margin:6px 0 0">${tarihSaat(slot.bas)}</p><p class="soluk" style="margin:2px 0 0">${slot.sure} dakika</p>
+      <div class="btnlar"><button class="btn ikincil" onclick="randevuKopyala('${slot.id}')">Görüşme bilgisini kopyala</button></div></div>`;
+  } else if (!ev && aktifMi(b)) {
+    ksHazirla('bd-' + b.id, b.ilanId);
+    h += `<div class="kart"><b class="kartBaslik">Görüşme saati seç</b>${kiraciSaatSecici()}
+      ${KS.slot ? `<button class="btn tam buyukBtn" onclick="randevuAl('${b.id}')">Bu saati seç</button>` : ''}</div>`;
+  } else {
+    h += '<div class="kart"><b class="kartBaslik">Görüşme</b><p class="soluk" style="margin:6px 0 0">Görüşme saati yok.</p></div>';
+  }
+
+  if (!ev && slot && i) h += anahtarKart(i);
+
+  if (ev) h += `<div class="kart"><b class="kartBaslik">İletişim</b><p style="font-size:20px;margin:6px 0 0;user-select:all">${esc(b.telefon) || '—'}</p>
+    ${b.telefon ? `<div class="btnlar"><button class="btn ikincil" onclick="kopyala('${esc(b.telefon)}')">Numarayı kopyala</button><a class="btn ikincil" href="tel:${esc(b.telefon.replace(/\s/g, ''))}">Ara</a><a class="btn ikincil" target="_blank" rel="noopener" href="${esc(waLink(waNo(b.telefon), `Merhaba ${b.ad}, ${i ? i.baslik : ''} ilanına başvurunuzla ilgili yazıyorum.`))}">WhatsApp</a></div>` : ''}
+    ${b.mesaj ? `<p class="aciklama soluk">“${esc(b.mesaj)}”</p>` : ''}</div>`;
+
+  const bk = Object.entries(b.belgeler || {});
+  h += `<div class="kart"><b class="kartBaslik">Belgeler</b>${bk.length ? `<div class="belgeler">${bk.map(([k, d]) => `<button class="belge" onclick="belgeAc('${d.id}'${ev ? `,'${esc(dosyaAdi(b.ad + ' - ' + (BELGE_TURLERI[k] || k))).replace(/'/g, '')}'` : ''})">${d.tur && d.tur.startsWith('image/') ? `<img data-dosya="${d.id}" alt="">` : '<span class="pdf">PDF</span>'}<span><b>${BELGE_TURLERI[k] || esc(k)}</b><small>Açmak için dokun · ${boyutYaz(d.boyut)}</small></span></button>`).join('')}</div>` : '<p class="soluk">Belge yok.</p>'}
+    ${ev && bk.length ? `<button class="btn tam buyukBtn" id="pdfBtn" onclick="belgelerPdf('${b.id}')">${ik(IK.indir, 22)}Tüm belgeleri tek PDF yap · indir / paylaş</button>
+      <p class="soluk kucukYazi">${CLAUDE_ICINDE ? "iPhone'daki Claude uygulamasında paylaşım menüsü açılır: WhatsApp, Mail veya Yazdır'ı seçebilirsin. Android'de ve bilgisayarda dosya kaydedilir; oradan paylaşabilir ya da yazdırabilirsin." : 'PDF hazır olunca "Paylaş"a dokun: WhatsApp, Mail ya da Yazdır\'ı seçebilirsin. İstersen telefona da indirebilirsin.'} Tek bir belge için belgeye dokun.</p>
+      <p class="soluk kucukYazi">e-Devlet'ten alınan barkodlu belgeler, e-Devlet'teki "Barkodlu Belge Doğrulama" hizmetiyle doğrulanabilir.</p>` : ''}</div>`;
+
+  if (ev) h += `<div class="kart"><b class="kartBaslik">Kararın</b><div class="btnlar">${[['inceleniyor', 'İnceliyorum'], ['onaylandi', 'Onayla'], ['reddedildi', 'Reddet']].map(([k, ad]) => `<button class="btn ${b.durum === k ? '' : 'ikincil'}" aria-pressed="${b.durum === k}" onclick="basvuruDurum('${b.id}','${k}')">${b.durum === k ? '✓ ' : ''}${ad}</button>`).join('')}</div>
+    <label class="alan">Kendine not <span class="soluk" style="font-weight:400">(kiracı görmez)</span><textarea onchange="basvuruNot('${b.id}',this.value)" maxlength="1000">${esc(b.evSahibiNotu)}</textarea></label></div>`;
+
+  const tehlikeler = [];
+  if (slot && aktifMi(b)) tehlikeler.push(`<button class="btn tehlike" onclick="randevuIptal('${b.id}')">Görüşmeyi iptal et</button>`);
+  if (ev && bk.length) tehlikeler.push(`<button class="btn tehlike" onclick="belgeleriSil('${b.id}')">Belgeleri cihazdan sil</button>`);
+  if (!ev && aktifMi(b)) tehlikeler.push(`<button class="btn tehlike" onclick="basvuruGeriCek('${b.id}')">Başvuruyu geri çek</button>`);
+  if (tehlikeler.length) h += tehlikeBolum(tehlikeler.join(''));
+  return h;
+}
+function randevuKopyala(slotId) {
+  const x = S.slotlar.find(s => s.id === slotId); if (!x) return;
+  const i = S.ilanlar.find(a => a.id === x.ilanId), b = S.basvurular.find(a => a.id === x.basvuruId);
+  kopyala([`Ev görüşmesi: ${i ? i.baslik : ''}`, `Zaman: ${tarihSaat(x.bas)} (${x.sure} dk)`, i ? `Adres: ${i.adres}` : '', b ? `Kiracı: ${b.ad} ${b.telefon || ''}` : ''].filter(Boolean).join('\n'));
+}
+
+/* ---------- Randevular (ev sahibi) ---------- */
+function ekranRandevular() {
+  const g = gunlereAyir(yaklasanRandevular());
+  const gunler = Object.keys(g);
+  return `<h2 class="baslik">Görüşmeler</h2>${ipucu('Kiracılarla yaklaşan görüşmelerin, gün gün. Kişiye dokununca başvurusu açılır.')}
+    ${gunler.map(d => `<div class="kart"><div class="gunBaslik">${gunBaslik(d)}</div>${g[d].map(x => {
+      const b = S.basvurular.find(a => a.id === x.basvuruId), i = S.ilanlar.find(a => a.id === x.ilanId);
+      return `<div class="randevu"><div class="saatKutu">${saat(x.bas)}</div><div style="flex:1;min-width:0"><a href="#/basvuru/${x.basvuruId}" style="font-size:18px"><b>${esc(b ? b.ad : '—')}</b></a><div class="soluk kucukYazi">${esc(i ? i.baslik : '')} · ${x.sure} dk${b && b.telefon ? '<br>' + esc(b.telefon) : ''}</div></div></div>`;
+    }).join('')}</div>`).join('') || '<div class="kart bos">Yaklaşan görüşme yok. İlanının sayfasından görüşme saati ekleyebilirsin.</div>'}`;
+}
+
+/* ---------- Bildirimler ---------- */
+function ekranBildirimler() {
+  const list = S.bildirimler.filter(b => b.rol === S.rol);
+  return `<h2 class="baslik">Bildirimler</h2>${ipucu('Sana gelen haberler. Dokununca ilgili sayfa açılır.')}
+    ${list.some(b => !b.okundu) ? '<button class="btn ikincil tam" onclick="tumunuOku()">Hepsini okundu say</button>' : ''}
+    ${list.map(b => `<button class="bildirim ${b.okundu ? '' : 'yeni'}" onclick="bildirimAc('${b.id}')"><i></i><span>${esc(b.metin)}<small>${b.okundu ? '' : 'Yeni · '}${tarihYaz(b.tarih)}, ${new Date(b.tarih).toTimeString().slice(0, 5)}</small></span></button>`).join('') || '<div class="kart bos">Henüz bildirim yok.</div>'}`;
+}
+function bildirimAc(id) { const b = S.bildirimler.find(x => x.id === id); b.okundu = true; kaydet(); git(b.link || '#/'); }
+function tumunuOku() { S.bildirimler.forEach(b => { if (b.rol === S.rol) b.okundu = true; }); kaydet(); render(); }
+
+/* ---------- Ayarlar ---------- */
+function ekranAyarlar() {
+  const p = S.profil || {}, ks = Object.keys(S.oranlar).sort().reverse(), bu = ayAnahtar(new Date());
+  return {
+    html: `<h2 class="baslik">Ayarlar</h2>${ipucu('Uygulamayı nasıl kullandığını, bilgilerini ve verilerini buradan yönetirsin.')}
+    <div class="kart"><b class="kartBaslik">Uygulamayı nasıl kullanıyorsun?</b>
+      <button class="rolBtn ${S.rol === 'kiraci' ? 'secili' : ''}" aria-pressed="${S.rol === 'kiraci'}" onclick="rolSec('kiraci')"><b>${S.rol === 'kiraci' ? '✓ ' : ''}Kiracı olarak</b><span>Kiramı takip ediyorum, ev arıyorum.</span></button>
+      <button class="rolBtn ${S.rol === 'evsahibi' ? 'secili' : ''}" aria-pressed="${S.rol === 'evsahibi'}" onclick="rolSec('evsahibi')"><b>${S.rol === 'evsahibi' ? '✓ ' : ''}Ev sahibi olarak</b><span>Evimi kiraya veriyorum.</span></button></div>
+    <form class="kart" onsubmit="profilKaydet(event)"><b class="kartBaslik">Bilgilerim</b>
+      <label class="alan" for="prAd">Adın soyadın<input id="prAd" name="ad" maxlength="60" value="${esc(p.ad)}"></label>
+      <label class="alan" for="prTel">Telefonun<input id="prTel" name="telefon" type="tel" value="${esc(p.telefon)}"></label>
+      <button class="btn tam">Kaydet</button></form>
+    <div class="kart"><b class="kartBaslik">Yasal en fazla kira artışı</b>
+      <p class="soluk kucukYazi" style="margin:4px 0 0">Konut kiralarında bir yılda yapılabilecek en fazla artış oranı (TÜFE'nin son 12 aylık ortalaması). Yenileme ayına bakılır.</p>
+      ${S.oranlar[bu] == null ? `<p class="durum sari">${ayAdi(bu)}: Bu ayın oranı henüz açıklanmadı.</p>` : ''}
+      <table class="tablo">${ks.map(k => `<tr><td>${ayAdi(k)}</td><td>%${fo(S.oranlar[k])}</td></tr>`).join('')}</table></div>
+    ${yuklemeGoster() ? `<div class="kart"><b class="kartBaslik">Telefona yükle</b><p class="soluk kucukYazi" style="margin:4px 0 0">Ana ekranda simgesi olur, uygulama gibi açılır.</p><button class="btn tam" onclick="uygulamaYukle()">Uygulamayı yükle</button></div>` : ''}
+    ${!CLAUDE_ICINDE && 'Notification' in window ? `<div class="kart"><b class="kartBaslik">Telefon bildirimleri</b><p class="soluk kucukYazi" style="margin:4px 0 0">Uygulama açıkken gelen haberler telefonun bildirimi olarak da görünür.</p><button class="btn ${Notification.permission === 'granted' ? 'ikincil' : ''} tam" onclick="bildirimIzni()" ${Notification.permission === 'granted' ? 'disabled' : ''}>${Notification.permission === 'granted' ? '✓ Açık' : 'Bildirimleri aç'}</button></div>` : ''}
+    <div class="kart"><b class="kartBaslik">Yardım</b><p class="soluk kucukYazi" style="margin:4px 0 0">Uygulamanın kısa tanıtımını yeniden görebilirsin.</p>
+      <button class="btn ikincil tam" onclick="tanitimTekrar()">Tanıtımı yeniden göster</button></div>
+    <div class="kart"><b class="kartBaslik">Verilerim</b><p class="soluk kucukYazi" id="depolama" style="margin:4px 0 0">Veriler bu tarayıcıda saklanır; başka cihaza veya kişiye gitmez.</p></div>
+    ${tehlikeBolum('<button class="btn tehlike" onclick="hepsiniSil()">Tüm verileri sil</button>')}`,
+    after: async () => {
+      try {
+        if (navigator.storage && navigator.storage.estimate) {
+          const e = await navigator.storage.estimate();
+          const el = $('#depolama'); if (el) el.textContent = `Veriler bu tarayıcıda saklanır; başka cihaza veya kişiye gitmez. Kullanılan alan: ${boyutYaz(e.usage) || '0 KB'}.`;
+        }
+      } catch (e) {}
+    }
+  };
+}
+function profilKaydet(e) { e.preventDefault(); const f = new FormData(e.target); S.profil = { ad: f.get('ad').trim(), telefon: f.get('telefon').trim() }; kaydet(); toast('Bilgilerin kaydedildi'); }
+async function hepsiniSil() {
+  if (!(await onayla('Tüm evler, ödemeler, ilanlar, başvurular ve belgeler kalıcı olarak silinsin mi?', 'Evet, hepsini sil'))) return;
+  try { const hepsi = await DB.hepsi(); for (const d of hepsi) await dosyaSil(d.id); } catch (e) {}
+  try { localStorage.removeItem(DEPO_ANAHTARI); } catch (e) {}
+  S = bosDurum(); S.tanitim = true; S.oranlar = Object.assign({}, ORANLAR_VARSAYILAN); kaydet();
+  BF = {}; KS = {}; SF = { ilanId: null };
+  toast('Tüm veriler silindi'); git('#/');
+}
+
+/* ---------- Yetim dosya temizliği ---------- */
+async function yetimTemizle() {
+  try {
+    const kull = new Set();
+    S.ilanlar.forEach(i => { (i.fotolar || []).forEach(f => kull.add(f)); ((i.anahtar && i.anahtar.fotolar) || []).forEach(f => kull.add(f.id)); });
+    S.basvurular.forEach(b => Object.values(b.belgeler || {}).forEach(d => kull.add(d.id)));
+    const hepsi = await DB.hepsi();
+    for (const d of hepsi) if (!kull.has(d.id) && Date.now() - new Date(d.olusturma).getTime() > 86400000) await DB.sil(d.id);
+  } catch (e) {}
+}
+
+/* ---------- Çizim ---------- */
+const ROTALAR = {
+  '': ekranAna, 'sozlesme-yeni': () => ekranSozlesmeForm(), 'sozlesme': ekranSozlesmeForm, 'odeme': ekranOdeme, 'mesaj': ekranMesaj,
+  'ilanlar': ekranIlanlar, 'ilan': ekranIlan, 'ilan-form': ekranIlanForm, 'basvur': ekranBasvur, 'gonderildi': ekranGonderildi,
+  'basvurular': ekranBasvurular, 'basvuru': ekranBasvuru, 'randevular': ekranRandevular,
+  'bildirimler': ekranBildirimler, 'ayarlar': ekranAyarlar
+};
+const NAV_GRUP = { sozlesme: '', 'sozlesme-yeni': '', odeme: '', mesaj: '', ilan: 'ilanlar', 'ilan-form': 'ilanlar', basvur: 'ilanlar', basvuru: 'basvurular', gonderildi: 'basvurular' };
+function ustCiz() {
+  const n = S.bildirimler.filter(b => b.rol === S.rol && !b.okundu).length;
+  $('#ust').innerHTML = `<a class="marka" href="#/">${LOGO}<span>Kira Defteri</span></a>${S.rol && S.tanitim
+    ? `<a class="bildirimBtn" href="#/bildirimler" aria-label="Bildirimler${n ? ', ' + n + ' yeni' : ''}">${ik(IK.zil, 22)}<span>Bildirimler</span>${n ? `<em>${n > 9 ? '9+' : n}</em>` : ''}</a>` : ''}`;
+}
+function navCiz(r) {
+  const aktif = r in NAV_GRUP ? NAV_GRUP[r] : r;
+  const bek = S.basvurular.filter(b => b.durum === 'beklemede').length;
+  const ogeler = S.rol === 'kiraci'
+    ? [['', 'Ana sayfa', 'ev'], ['ilanlar', 'Ev bul', 'ara'], ['basvurular', 'Başvurularım', 'belge'], ['ayarlar', 'Ayarlar', 'ayar']]
+    : [['', 'Ana sayfa', 'ev'], ['ilanlar', 'İlanlarım', 'anahtar'], ['basvurular', 'Başvurular', 'belge'], ['randevular', 'Görüşmeler', 'takvim'], ['ayarlar', 'Ayarlar', 'ayar']];
+  $('#altNav').innerHTML = ogeler.map(([k, ad, ic]) => `<a href="#/${k}" class="${aktif === k ? 'aktif' : ''}" ${aktif === k ? 'aria-current="page"' : ''}>${ik(IK[ic])}${ad}${S.rol === 'evsahibi' && k === 'basvurular' && bek ? `<span class="rozet">${bek}</span>` : ''}</a>`).join('');
+}
+let SON_ROTA = null;
+function render() {
+  const h = ROTA;
+  const [r, id] = h.split('/');
+  ustCiz();
+  const nav = $('#altNav'), app = $('#app');
+  if (!S.tanitim) { nav.hidden = true; app.innerHTML = ekranTanitim() + yasal(); window.scrollTo(0, 0); return; }
+  if (!S.rol) { nav.hidden = true; app.innerHTML = ekranRol() + yasal(); return; }
+  nav.hidden = false;
+  let out;
+  try { out = (ROTALAR[r] || ekranAna)(id); }
+  catch (e) { console.error(e); out = `<div class="kart">Bir sorun oluştu: ${esc(e.message)}</div><a class="btn ikincil tam" href="#/">Ana sayfaya dön</a>`; }
+  if (typeof out === 'string') out = { html: out };
+  app.innerHTML = out.html + yasal();
+  navCiz(r || '');
+  dosyalariBagla(app);
+  if (out.after) out.after();
+  if (SON_ROTA !== h) { window.scrollTo(0, 0); SON_ROTA = h; }
+}
+
+/* ---------- Uygulamayı telefona yükle (kendi sitesinde) ---------- */
+let KURULUM = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); KURULUM = e; if (ROTA === '' || ROTA === 'ayarlar') render(); });
+window.addEventListener('appinstalled', () => { KURULUM = null; toast('Kira Defteri yüklendi'); render(); });
+const yuklemeGoster = () => !CLAUDE_ICINDE && !YUKLU();
+async function uygulamaYukle() {
+  if (KURULUM) { KURULUM.prompt(); try { await KURULUM.userChoice; } catch (e) {} KURULUM = null; render(); return; }
+  const adimlar = IOS
+    ? ['Bu sayfayı <b>Safari</b>\'de aç. WhatsApp veya Instagram içinden açtıysan sağ üstteki menüden "Safari\'de aç"ı seç.', 'Adres çubuğunun yanındaki <b>•••</b> düğmesine dokun.', '<b>Paylaş</b>\'a dokun.', 'Aşağı kaydır, <b>Ana Ekrana Ekle</b>\'ye dokun.', 'Sağ üstteki <b>Ekle</b>\'ye dokun.']
+    : ['Bu sayfayı <b>Chrome</b>\'da aç.', 'Sağ üstteki <b>⋮</b> menüsüne dokun.', '<b>Uygulamayı yükle</b> ya da <b>Ana ekrana ekle</b>\'ye dokun.', '<b>Yükle</b>\'ye dokun.'];
+  $('#modalIcerik').innerHTML = `<b style="font-size:20px">Telefona yükle</b><p class="soluk" style="margin:4px 0 8px">Yüklenince ana ekranda simgesi olur, uygulama gibi açılır.</p>
+    <ol class="siradaki">${adimlar.map(a => `<li>${a}</li>`).join('')}</ol><button class="btn tam" onclick="modalKapat()">Tamam</button>`;
+  $('#modal').hidden = false;
+}
+function yukleKarti() {
+  if (!yuklemeGoster() || S.yukleGizle) return '';
+  return `<div class="kart" style="background:var(--yesilA);border-color:#a9d3bb"><b class="kartBaslik">Telefonuna yükle</b><p style="margin:4px 0 0">Ana ekranda simgesi olur, uygulama gibi açılır.</p>
+    <div class="btnlar"><button class="btn" onclick="uygulamaYukle()">Nasıl yüklenir?</button><button class="btn ikincil" onclick="S.yukleGizle=true;kaydet();render()">Şimdi değil</button></div></div>`;
+}
+
+/* ---------- Başlat ---------- */
+S.oranlar = Object.assign({}, ORANLAR_VARSAYILAN, S.oranlar);
+window.addEventListener('storage', e => { if (e.key === DEPO_ANAHTARI) { S = yukle(); render(); } });
+try { navigator.storage && navigator.storage.persist && navigator.storage.persist().catch(() => {}); } catch (e) {}
+try { history.replaceState({ rota: '' }, ''); } catch (e) {}
+if (!CLAUDE_ICINDE && 'serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+hatirlaticilar();
+render();
+oranlariYukle();
+yetimTemizle();
+setInterval(() => { hatirlaticilar(); ustCiz(); }, 5 * 60 * 1000);
+</script>
+</body>
+</html>
